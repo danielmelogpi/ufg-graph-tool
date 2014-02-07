@@ -1,0 +1,10 @@
+* implementar remoção de objetos após seleção do mesmo pelo botão de remoção; (feito)
+* arrumar o bug: remoção + seleção = não selecionar; (feito)
+* mudar cor do botão do menu quando selecionado;
+* seleção de vários objetos através do arraste do mouse (mostrar o retângulo);
+* mudança da língua para inglês;
+* quando tiver vários objetos selecionados e houver clique em somente um, marcar somente o objeto clicado; (feito)
+* mover toda a seleção;
+* possibilidade de aumentar e diminuir objeto selecionado; (em curso )
+* preparar uma "pseudo" documentação do programa; (em curso)
+* implementar palheta de cores para mudar a cor de um objeto; (em curso)
