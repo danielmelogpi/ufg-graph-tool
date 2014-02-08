@@ -1,0 +1,12 @@
+{
+  "name": "GraphApp",
+  "readme": "src/README.md",
+  "version": "0.3.0",
+  "title": "UFG Graph Application",
+  "homepage": "http://www.yoursite.com.br",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-uglify": "~0.3.2",
+    "grunt-contrib-watch": "~0.5.3"
+  }
+}
