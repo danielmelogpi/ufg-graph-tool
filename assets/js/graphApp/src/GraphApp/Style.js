@@ -10,4 +10,4 @@
 */
 GraphApp.Graph.Style = function () {
 	this.colors = new GraphApp.Graph.Colors();
-};
+}; 

@@ -17,3 +17,5 @@ GraphApp.Graph.Colors = function () {
 	this.SELECTION_RECT_FILL = "transparent";
 	this.SELECTION_RECT_STROKE = "#c73028";
 };
+
+GraphApp.Graph.Colors.prototype = {};

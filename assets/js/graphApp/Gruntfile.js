@@ -1,6 +1,5 @@
 //Grunt is just JavaScript running in node, after all...
 module.exports = function(grunt) {
-
   // All upfront config goes in a massive nested object.
   grunt.initConfig({
     // You can set arbitrary key-value pairs.
@@ -14,7 +13,7 @@ module.exports = function(grunt) {
       // Specify some options, usually specific to each plugin.
       options: {
         // Specifies string to be inserted between concatenated files.
-        separator: '\n;',
+        separator: '',
          banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
       },
       // 'dist' is what is called a "target."
@@ -22,7 +21,11 @@ module.exports = function(grunt) {
       dist: {
         // The files to concatenate:
         // Notice the wildcard, which is automatically expanded.
-        src: ['src/**/*.js'],
+        src: ['src/*.js',
+              'src/GraphApp/*.js',
+              'src/GraphApp/Control/*.js',
+              'src/GraphApp/Style/*.js',
+              'src/GraphApp/Handler/*.js'],
         // The destination file:
         // Notice the angle-bracketed ERB-like templating,
         // which allows you to reference other properties.
@@ -39,12 +42,8 @@ module.exports = function(grunt) {
         options: {
           spawn: false,
           interval: 500,
-          dateFormat: function(time) {
-            grunt.log.writeln('O watch executou as tarefas em' + time + 'ms \t\t' + (new Date()).toString());
-            grunt.log.writeln('Aguardando novas alterações...');
-          },
-        },
-      },
+        }
+      }
     }
   }); // The end of grunt.initConfig
 

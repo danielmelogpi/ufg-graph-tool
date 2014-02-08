@@ -1,14 +1,21 @@
-"use strict";
-
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
 
 /** Defines a node and it's properties. 
 * This object retrieves the reference to Kinetic Js Circle, 
 * that is the visual node */
-GraphApp.Graph.Node = function (x, y) {
-	
+GraphApp.Node = function (x, y) {
+	"use strict";
+
+	this.Iam = "GraphApp.Node";
+	this.graph = undefined;
 	this.style = new GraphApp.Graph.Style.Node();
+	this.id = Math.random();
+	this.selected  = false;
+	this.isRemoved = false;
+	this.nodesFromHere = [];
+	this.nodesToHere = [];
+
 
 	var colors = this.style.colors;
 	this.shape = new Kinetic.Circle({
@@ -18,11 +25,9 @@ GraphApp.Graph.Node = function (x, y) {
 		fill: colors.CIRCLE_DEFAULT_FILL,
 		draggable: true,
 		stroke: colors.CIRCLE_DEFAULT_STROKE,
-		strokeWidth: this.style.strokeWidth,
-		id : Math.random(),
-		selected : false,
-		isRemoved: false
+		strokeWidth: this.style.strokeWidth
 	});
+	this.shape.holder = this;
 
 	this.actualLook = {
 		radius: this.style.radius,
@@ -34,15 +39,19 @@ GraphApp.Graph.Node = function (x, y) {
 		y: y
 	};
 
-	this.shape.on("dragstart dragmove", function () {
-		// activateNavigation ();
-		// if(actualControl == "navigation"){
-		// 	handleMovementEffect(this);
-		// 	//updateMyEdges(this);
-		// }
+	this.shape.on("dragstart dragmove dragend", function () {
+		if (this.holder.graph.app.activeControl instanceof GraphApp.Control.Navigation) {
+			this.holder.nodesFromHere.forEach(function (edge) {
+				edge.updatePoints();
+			});
+			this.holder.nodesToHere.forEach(function (edge) {
+				edge.updatePoints();
+			});
+			this.holder.graph.stage.draw();
+		}
 	});
 
-//	this.shape.on("click.selectToogle", selectionHandler);
+	//this.shape.on("click.selectToogle", selectionHandler);
 //	this.shape.selectionRect = defaultSelectionRect(circle);
 
 //	this.shape

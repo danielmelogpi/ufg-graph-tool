@@ -2,13 +2,24 @@
 /*global Kinetic, GraphApp */
 /** Defines the stage where the <canvas> element is constructed */
 
-"use strict";
+
 GraphApp.Stage = function (canvasHandler) {
-	var stage = new Kinetic.Stage({
+	"use strict";
+	this.Iam = "GraphApp.Stage";
+	this.kineticStage = new Kinetic.Stage({
 		container: canvasHandler,
 		width: window.screen.availWidth,
 		height: window.screen.availHeight,
 		draggable: false
 	});
-	return stage;
+
+	/** Adds a layer to the Kinetics Stage */
+	this.addLayer = function (layer) {
+		return this.kineticStage.add(layer.kineticLayer);
+	};
+
+	/** Refreshes the stage */
+	this.draw = function () {
+		return this.kineticStage.draw();
+	};
 };

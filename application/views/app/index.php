@@ -4,6 +4,7 @@
 	<?
 	echo script_tag("assets/js/jquery.min.js");
 	echo script_tag("assets/js/kinetic-v4.7.4.js");	
+	echo script_tag("assets/js/graphApp/build/GraphApp.js");
 	echo script_tag("assets/js/graphApp/Application.js");
 	?>
 </head>

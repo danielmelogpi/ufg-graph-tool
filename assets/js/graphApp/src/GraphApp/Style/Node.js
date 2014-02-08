@@ -12,6 +12,5 @@
 GraphApp.Graph.Style.Node = function () {
 	this.radius = 12;
 	this.strokeWidth = 2;
-	return this;
 };
 GraphApp.Graph.Style.Node.prototype = new GraphApp.Graph.Style();
