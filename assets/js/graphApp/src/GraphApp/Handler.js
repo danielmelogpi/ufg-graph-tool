@@ -9,4 +9,5 @@ GraphApp.Handler = function (event, target) {
 	/** Keeps the event beeing worked */
 	this.event = event;
 	this.target = target;
+	this.details = {};
 };

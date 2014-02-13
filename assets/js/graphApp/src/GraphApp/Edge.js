@@ -12,10 +12,11 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 
 	this.origin = nodeOrigin;
 	this.target = nodeTarget;
-	this.curve_modified = false;
+	this.curveModified = false;
 	this.selected  = false;
 	this.id = Math.random();
 	this.isRemoved = false;
+	this.curving = false;
 
 	nodeOrigin.nodesFromHere.push(this);
 	nodeTarget.nodesToHere.push(this);
@@ -52,27 +53,32 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		stroke: colors.LINE_DEFAULT_STROKE
 	};
 
-
+	/** Isso pode ser abstraido para um objeto? precisa? */
 	this.updatePoints = function () {
-		if (this.curve_modified) {
-			var points = [this.origin.shape.getX(),
+		if (this.curveModified) {
+			this.points = [this.origin.shape.getX(),
 					this.origin.shape.getY(),
 					this.shape.getPoints()[1].x,
 					this.shape.getPoints()[1].y,
 					this.target.shape.getX(),
-					this.target.shape.getY()];	
+					this.target.shape.getY()];
 		}
 		else {
-			var points = [this.origin.shape.getX(),
+			this.points = [this.origin.shape.getX(),
 					this.origin.shape.getY(),
 					this.target.shape.getX(),
 					this.target.shape.getY(),
 					this.target.shape.getX(),
 					this.target.shape.getY()];
 		}
-		this.points = points;
-		this.shape.setPoints(points);
+		this.shape.setPoints(this.points);
 	};
+
+	this.shape.on("mousedown", function (event) {
+		var handler = new GraphApp.Handler.DragEdge(event, this.holder);
+		handler.run();
+		console.assert(handler.details.success);
+	});
 
 /*
 	this.shape.on('mouseover', function(){
@@ -83,6 +89,7 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		}
 		mouseToPointer();
 	});
+
 	this.shape.on('mouseout', function(){
 		if(!this.selected){
 			//this.setStroke(this.actualLook.stroke);
@@ -90,10 +97,9 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		}
 		mouseToDefault();
 	});
-
-	this.shape.on("mousedown", function(evt){
+*/
+	/*this.shape.on("mousedown", function(evt){
 		if(evt.altKey  && evt.ctrlKey){
-
 			mouseIsDown = true;
 			blockLastMouse = false;
 			this.flexible.start();	
@@ -112,6 +118,6 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 
 	line.selectionRect = defaultSelectionRect(line);
 	return  line;
-};
-*/
+//};
+/**/
 };

@@ -79,7 +79,7 @@ function restoreCurve(){
 					this.attrs.origin.getX(), this.attrs.origin.getY(), 
 					this.getPoints()[2].x,this.getPoints()[2].y, 
 					this.getPoints()[2].x,this.getPoints()[2].y
-				  ];	
+				];	
 
 	var tween = new Kinetic.Tween({
         node: this, 

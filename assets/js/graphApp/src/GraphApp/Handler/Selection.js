@@ -4,7 +4,9 @@
 /**
 * Deals with selecting and unselecting elements
 */
-GraphApp.Handler.Selection = function () {
+GraphApp.Handler.Selection = function (event, target) {
 	"use strict";
+	
+
 };
-GraphApp.Handler.Selection.prototype = new GraphApp.Handler(undefined);
+GraphApp.Handler.Selection.prototype = new GraphApp.Handler();

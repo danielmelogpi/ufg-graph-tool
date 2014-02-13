@@ -1,4 +1,4 @@
-/*! GraphApp 08-02-2014 */
+/*! GraphApp 12-02-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -50,8 +50,7 @@ var GraphApp = function (canvasHandler) {
 	};
 
 };
-
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -63,8 +62,7 @@ Defines that represents user interaction with the application.
 */
 GraphApp.Control = function () {
 	
-};
-;"use strict";
+};"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
@@ -78,10 +76,11 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 
 	this.origin = nodeOrigin;
 	this.target = nodeTarget;
-	this.curve_modified = false;
+	this.curveModified = false;
 	this.selected  = false;
 	this.id = Math.random();
 	this.isRemoved = false;
+	this.curving = false;
 
 	nodeOrigin.nodesFromHere.push(this);
 	nodeTarget.nodesToHere.push(this);
@@ -118,27 +117,32 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		stroke: colors.LINE_DEFAULT_STROKE
 	};
 
-
+	/** Isso pode ser abstraido para um objeto? precisa? */
 	this.updatePoints = function () {
-		if (this.curve_modified) {
-			var points = [this.origin.shape.getX(),
+		if (this.curveModified) {
+			this.points = [this.origin.shape.getX(),
 					this.origin.shape.getY(),
 					this.shape.getPoints()[1].x,
 					this.shape.getPoints()[1].y,
 					this.target.shape.getX(),
-					this.target.shape.getY()];	
+					this.target.shape.getY()];
 		}
 		else {
-			var points = [this.origin.shape.getX(),
+			this.points = [this.origin.shape.getX(),
 					this.origin.shape.getY(),
 					this.target.shape.getX(),
 					this.target.shape.getY(),
 					this.target.shape.getX(),
 					this.target.shape.getY()];
 		}
-		this.points = points;
-		this.shape.setPoints(points);
+		this.shape.setPoints(this.points);
 	};
+
+	this.shape.on("mousedown", function (event) {
+		var handler = new GraphApp.Handler.DragEdge(event, this.holder);
+		handler.run();
+		console.assert(handler.details.success);
+	});
 
 /*
 	this.shape.on('mouseover', function(){
@@ -149,6 +153,7 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		}
 		mouseToPointer();
 	});
+
 	this.shape.on('mouseout', function(){
 		if(!this.selected){
 			//this.setStroke(this.actualLook.stroke);
@@ -156,10 +161,9 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		}
 		mouseToDefault();
 	});
-
-	this.shape.on("mousedown", function(evt){
+*/
+	/*this.shape.on("mousedown", function(evt){
 		if(evt.altKey  && evt.ctrlKey){
-
 			mouseIsDown = true;
 			blockLastMouse = false;
 			this.flexible.start();	
@@ -178,10 +182,9 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 
 	line.selectionRect = defaultSelectionRect(line);
 	return  line;
-};
-*/
-};
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+//};
+/**/
+};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -226,8 +229,7 @@ GraphApp.Graph = function () {
 		this.app.addShape(newEdge.shape);
 		return newEdge;
 	};
-};
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
 /**
@@ -238,8 +240,15 @@ GraphApp.Handler = function (event, target) {
 	/** Keeps the event beeing worked */
 	this.event = event;
 	this.target = target;
-};
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+	this.details = {};
+};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global GraphApp */
+
+/** Describe some kind of input from the user, like mouse or keyboard */
+GraphApp.Input = function () {
+	"use strict";
+	this.stage = undefined;
+};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  Kinetic, GraphApp */
 
 
@@ -254,8 +263,7 @@ GraphApp.Layer = function () {
 		this.kineticLayer.add(shape);
 	};
 };
-
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
 
 /** Defines a node and it's properties. 
@@ -296,24 +304,12 @@ GraphApp.Node = function (x, y) {
 		y: y
 	};
 
-	this.shape.on("dragstart dragmove dragend", function () {
-		if (this.holder.graph.app.activeControl instanceof GraphApp.Control.Navigation) {
-			this.holder.nodesFromHere.forEach(function (edge) {
-				edge.updatePoints();
-			});
-			this.holder.nodesToHere.forEach(function (edge) {
-				edge.updatePoints();
-			});
-			this.holder.graph.stage.draw();
-		}
+	this.shape.on("dragstart dragmove dragend", function (e) {
+		var handler = new GraphApp.Handler.DragNode(e, this.holder);
+		console.assert(handler.details.success);
 	});
 
-	//this.shape.on("click.selectToogle", selectionHandler);
-//	this.shape.selectionRect = defaultSelectionRect(circle);
-
-//	this.shape
-};
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
 /** Defines the stage where the <canvas> element is constructed */
 
@@ -337,8 +333,7 @@ GraphApp.Stage = function (canvasHandler) {
 	this.draw = function () {
 		return this.kineticStage.draw();
 	};
-};
-;"use strict";
+};"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
@@ -350,8 +345,7 @@ GraphApp.Stage = function (canvasHandler) {
 */
 GraphApp.Graph.Style = function () {
 	this.colors = new GraphApp.Graph.Colors();
-}; 
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+}; /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -371,8 +365,7 @@ GraphApp.Control.Delete = function () {
 		return this.name;
 	};
 };
-GraphApp.Control.Delete.prototype =  new GraphApp.Control();
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Control.Delete.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -392,8 +385,7 @@ GraphApp.Control.EdgeDraw = function () {
 		return this.name;
 	};
 };
-GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -413,8 +405,7 @@ GraphApp.Control.Navigation = function () {
 		return this.name;
 	};
 };
-GraphApp.Control.Navigation.prototype =  new GraphApp.Control();
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Control.Navigation.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -434,8 +425,7 @@ GraphApp.Control.NodeDraw = function () {
 		return this.name;
 	};
 };
-GraphApp.Control.NodeDraw.prototype =  new GraphApp.Control();
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Control.NodeDraw.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -456,8 +446,7 @@ GraphApp.Control.Zoom = function () {
 	};
 	
 };
-GraphApp.Control.Zoom.prototype =  new GraphApp.Control();
-;"use strict";
+GraphApp.Control.Zoom.prototype =  new GraphApp.Control();"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
@@ -477,8 +466,7 @@ GraphApp.Graph.Colors = function () {
 	this.SELECTION_RECT_STROKE = "#c73028";
 };
 
-GraphApp.Graph.Colors.prototype = {};
-;"use strict";
+GraphApp.Graph.Colors.prototype = {};"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
@@ -495,8 +483,7 @@ GraphApp.Graph.Style.Edge = function () {
 	this.lineCap = "round";
 	this.lineJoin = "round";
 };
-GraphApp.Graph.Style.Edge.prototype = new GraphApp.Graph.Style();
-;"use strict";
+GraphApp.Graph.Style.Edge.prototype = new GraphApp.Graph.Style();"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
@@ -511,14 +498,120 @@ GraphApp.Graph.Style.Node = function () {
 	this.radius = 12;
 	this.strokeWidth = 2;
 };
-GraphApp.Graph.Style.Node.prototype = new GraphApp.Graph.Style();
-;/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Graph.Style.Node.prototype = new GraphApp.Graph.Style();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp, $ */
+
+/**
+* Deals with dragging a node. 
+* @param <GraphApp.Edge>   target     who was dragged
+* @param <Object> event    the dragging event
+* @return void
+*/
+GraphApp.Handler.DragEdge = function (event, target) {
+	"use strict";
+	this.event = event;
+	this.target = target;
+	this.interval = undefined;
+	console.log(this.target);
+
+
+	/** Executes a animation  that curves the line until the control point
+	* reaches the mouse position 
+	* A closure is used to preserve this object betwen the executions of the interval
+	* @param handler   this exact instance of the object for when the setInterval is 
+	* setted up
+	*/
+	this.curveToMousePosition = function (handler) {
+		console.log("curving");
+
+		/** CODIGO PERIGOSO */
+		var animation = new Kinetic.Animation(function (frame) {
+			var mouseInput = new GraphApp.Input.Mouse(handler.target.graph.stage);
+			var mousePosition = mouseInput.getMousePosition();
+			
+			target.curveModified = true;
+			var actualPoints = handler.target.shape.getPoints();
+
+			handler.target.shape.setPoints([10, 20, 12, 22, 14, 20]);
+			console.debug(handler);
+		},
+		handler.target.graph.stage);
+		animation.start();
+/** CODIGO PERIGOSO */
+
+		console.debug(animation);
+	};
+
+	/** Stops the curving animation execution */
+	this.stop = function (event) {
+		//event.data[0] is sent in mouseup.dragEdge event, attached to window
+		if (event.data[0]) {
+			clearInterval(event.data[0]);
+			console.debug(event.data[0]);
+			$(window).off("mouseup.dragEdge");
+		}
+	};
+
+	/** Sets a function that executes the animation */
+	this.run = function () {
+		var curveMousePosition = this.curveToMousePosition;
+		var thisHandler = this;
+		this.interval = setInterval(function () {
+			curveMousePosition(thisHandler);
+		}, 50);
+		var interval = this.interval;
+		$(window).on("mouseup.dragEdge", [interval], this.stop);
+	};
+	
+	this.details.success = true;
+
+}; //end of object
+GraphApp.Handler.DragEdge.prototype = new GraphApp.Handler(undefined);
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp */
+
+/**
+* Deals with dragging a node. 
+* @param <GraphApp.Node> target     who was dragged
+* @param <Object> event    the dragging event
+* @return void
+*/
+GraphApp.Handler.DragNode = function (event, target) {
+	"use strict";
+	this.event = event;
+	this.target = target;
+	this.details = {};
+
+	if (!(target instanceof GraphApp.Node)) {
+		this.details.success = false;
+		this.details.message = "O tipo de objeto alvo não é o aceito por este handler.";
+		console.error(this.details);
+	}
+
+	/** @TODO   provavelmente isso aqui pode ser otimizado para o firefox */
+	if (this.target.graph.app.activeControl instanceof GraphApp.Control.Navigation) {
+		this.target.nodesFromHere.forEach(function (edge) {
+			edge.updatePoints();
+		});
+		this.target.nodesToHere.forEach(function (edge) {
+			edge.updatePoints();
+		});
+		this.target.graph.stage.draw();
+	}
+
+	this.details.success = true;
+
+}; //end of object
+GraphApp.Handler.DragNode.prototype = new GraphApp.Handler(undefined);
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
 /**
 * Deals with selecting and unselecting elements
 */
-GraphApp.Handler.Selection = function () {
+GraphApp.Handler.Selection = function (event, target) {
 	"use strict";
+	
+
 };
-GraphApp.Handler.Selection.prototype = new GraphApp.Handler(undefined);
+GraphApp.Handler.Selection.prototype = new GraphApp.Handler();

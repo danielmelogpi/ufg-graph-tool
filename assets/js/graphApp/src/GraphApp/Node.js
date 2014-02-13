@@ -39,20 +39,9 @@ GraphApp.Node = function (x, y) {
 		y: y
 	};
 
-	this.shape.on("dragstart dragmove dragend", function () {
-		if (this.holder.graph.app.activeControl instanceof GraphApp.Control.Navigation) {
-			this.holder.nodesFromHere.forEach(function (edge) {
-				edge.updatePoints();
-			});
-			this.holder.nodesToHere.forEach(function (edge) {
-				edge.updatePoints();
-			});
-			this.holder.graph.stage.draw();
-		}
+	this.shape.on("dragstart dragmove dragend", function (e) {
+		var handler = new GraphApp.Handler.DragNode(e, this.holder);
+		console.assert(handler.details.success);
 	});
 
-	//this.shape.on("click.selectToogle", selectionHandler);
-//	this.shape.selectionRect = defaultSelectionRect(circle);
-
-//	this.shape
 };
