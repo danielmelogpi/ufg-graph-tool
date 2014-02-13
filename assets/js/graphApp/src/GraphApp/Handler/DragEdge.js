@@ -31,9 +31,19 @@ GraphApp.Handler.DragEdge = function (event, target) {
 			
 			target.curveModified = true;
 			var actualPoints = handler.target.shape.getPoints();
+			var edgeOrigin = handler.target.origin;
+			var edgeTarget = handler.target.target
+			var points = [];
+			points[0] = edgeOrigin.shape.getX();
+			points[1] = edgeOrigin.shape.getY();
+			points[2] = mousePosition.x;
+			points[3] = mousePosition.y;
+			points[4] = edgeTarget.shape.getY();
+			points[5] = edgeTarget.shape.getY();
 
 			handler.target.shape.setPoints([10, 20, 12, 22, 14, 20]);
-			console.debug(handler);
+			handler.target.graph.stage.draw();	
+			this.stop();
 		},
 		handler.target.graph.stage);
 		animation.start();
@@ -47,7 +57,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 		//event.data[0] is sent in mouseup.dragEdge event, attached to window
 		if (event.data[0]) {
 			clearInterval(event.data[0]);
-			console.debug(event.data[0]);
+			console.debug("Stopping interval '" + event.data[0] + "'");
 			$(window).off("mouseup.dragEdge");
 		}
 	};

@@ -1,4 +1,4 @@
-/*! GraphApp 12-02-2014 */
+/*! GraphApp 13-02-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -531,9 +531,19 @@ GraphApp.Handler.DragEdge = function (event, target) {
 			
 			target.curveModified = true;
 			var actualPoints = handler.target.shape.getPoints();
+			var edgeOrigin = handler.target.origin;
+			var edgeTarget = handler.target.target
+			var points = [];
+			points[0] = edgeOrigin.shape.getX();
+			points[1] = edgeOrigin.shape.getY();
+			points[2] = mousePosition.x;
+			points[3] = mousePosition.y;
+			points[4] = edgeTarget.shape.getY();
+			points[5] = edgeTarget.shape.getY();
 
 			handler.target.shape.setPoints([10, 20, 12, 22, 14, 20]);
-			console.debug(handler);
+			handler.target.graph.stage.draw();	
+			this.stop();
 		},
 		handler.target.graph.stage);
 		animation.start();
@@ -547,7 +557,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 		//event.data[0] is sent in mouseup.dragEdge event, attached to window
 		if (event.data[0]) {
 			clearInterval(event.data[0]);
-			console.debug(event.data[0]);
+			console.debug("Stopping interval '" + event.data[0] + "'");
 			$(window).off("mouseup.dragEdge");
 		}
 	};
@@ -615,3 +625,43 @@ GraphApp.Handler.Selection = function (event, target) {
 
 };
 GraphApp.Handler.Selection.prototype = new GraphApp.Handler();
+ /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global GraphApp */
+
+/** Behaviors related to the mouse (cursor), como posicionamento e estado */
+GraphApp.Input.Mouse = function (stage) {
+	"use strict";
+	this.stage = stage;
+  
+	//isso não funciona esse escopo.. o objeto do mouse tem problemas
+	this.getMousePosition = function () {
+		var mouse = {
+				success: false,
+				x: 0,
+				y: 0
+			};
+
+		try {
+			var stageState = {
+				pointerX: this.stage.kineticStage.getPointerPosition().x,
+				pointerY: this.stage.kineticStage.getPointerPosition().y,
+				positionX: this.stage.kineticStage.getPosition().x,
+				positionY: this.stage.kineticStage.getPosition().y,
+				scaleX: this.stage.kineticStage.getScaleX(),
+				scaleY: this.stage.kineticStage.getScaleY()
+			};
+
+			mouse =  {
+				x: (stageState.pointerX - stage.positionX) / stageState.scaleX,
+				y: (stageState.pointerY - stage.positionY) / stageState.scaleY,
+				success: true
+			};
+			return mouse;
+		}
+		catch (e) {
+			console.debug("O mouse não pode ser capturado");
+			return mouse;
+		}
+	};
+};
+GraphApp.Input.Mouse.prototype = new GraphApp.Input();
