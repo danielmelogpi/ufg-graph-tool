@@ -5,6 +5,12 @@
 GraphApp.Input.Mouse = function (stage) {
 	"use strict";
 	this.stage = stage;
+
+	/** For some reason, I can only take mouse positions 
+	until this point. Weird . I decided to take everything I need them..*/
+	this.stagePointerPosition = stage.kineticStage.getPointerPosition();
+	this.stagePosition = stage.kineticStage.getPosition();
+	this.stageScale = this.stage.kineticStage.getScale();
   
 	//isso não funciona esse escopo.. o objeto do mouse tem problemas
 	this.getMousePosition = function () {
@@ -16,23 +22,24 @@ GraphApp.Input.Mouse = function (stage) {
 
 		try {
 			var stageState = {
-				pointerX: this.stage.kineticStage.getPointerPosition().x,
-				pointerY: this.stage.kineticStage.getPointerPosition().y,
-				positionX: this.stage.kineticStage.getPosition().x,
-				positionY: this.stage.kineticStage.getPosition().y,
-				scaleX: this.stage.kineticStage.getScaleX(),
-				scaleY: this.stage.kineticStage.getScaleY()
+				pointerX: this.stagePointerPosition.x,
+				pointerY: this.stagePointerPosition.y,
+				positionX: this.stagePosition.x,
+				positionY: this.stagePosition.y,
+				scaleX: this.stageScale.x,
+				scaleY: this.stageScale.y
 			};
 
 			mouse =  {
-				x: (stageState.pointerX - stage.positionX) / stageState.scaleX,
-				y: (stageState.pointerY - stage.positionY) / stageState.scaleY,
+				x: (stageState.pointerX - stageState.positionX) / stageState.scaleX,
+				y: (stageState.pointerY - stageState.positionY) / stageState.scaleY,
 				success: true
 			};
 			return mouse;
 		}
 		catch (e) {
 			console.debug("O mouse não pode ser capturado");
+			console.error(e);
 			return mouse;
 		}
 	};

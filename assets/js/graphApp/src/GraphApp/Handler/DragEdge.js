@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global  GraphApp, $ */
+/*global  GraphApp, $,Kinetic */
 
 /**
 * Deals with dragging a node. 
@@ -12,7 +12,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 	this.event = event;
 	this.target = target;
 	this.interval = undefined;
-	console.log(this.target);
+	console.debug(graphApp.stage.kineticStage.getPointerPosition());
 
 
 	/** Executes a animation  that curves the line until the control point
@@ -22,34 +22,32 @@ GraphApp.Handler.DragEdge = function (event, target) {
 	* setted up
 	*/
 	this.curveToMousePosition = function (handler) {
-		console.log("curving");
-
 		/** CODIGO PERIGOSO */
-		var animation = new Kinetic.Animation(function (frame) {
-			var mouseInput = new GraphApp.Input.Mouse(handler.target.graph.stage);
+		var animation = new Kinetic.Animation(function () {
+			var mouseInput = new GraphApp.Input.Mouse(handler.target.graph.stage, handler.event);
 			var mousePosition = mouseInput.getMousePosition();
-			
+
+			/** @TODO é necessário fazer o calculo de animação. 
+			Como ele é demorado para alinhar, vou fazer depois */
 			target.curveModified = true;
 			var actualPoints = handler.target.shape.getPoints();
 			var edgeOrigin = handler.target.origin;
-			var edgeTarget = handler.target.target
+			var edgeTarget = handler.target.target;
 			var points = [];
 			points[0] = edgeOrigin.shape.getX();
 			points[1] = edgeOrigin.shape.getY();
 			points[2] = mousePosition.x;
 			points[3] = mousePosition.y;
-			points[4] = edgeTarget.shape.getY();
+			points[4] = edgeTarget.shape.getX();
 			points[5] = edgeTarget.shape.getY();
-
-			handler.target.shape.setPoints([10, 20, 12, 22, 14, 20]);
+			
+			handler.target.shape.setPoints(points);
 			handler.target.graph.stage.draw();	
 			this.stop();
 		},
 		handler.target.graph.stage);
 		animation.start();
-/** CODIGO PERIGOSO */
 
-		console.debug(animation);
 	};
 
 	/** Stops the curving animation execution */
