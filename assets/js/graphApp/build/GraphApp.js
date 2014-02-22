@@ -718,7 +718,9 @@ GraphApp.Handler.DragNode = function (event, target) {
 		console.error(this.details);
 	}
 
-	/** @TODO   provavelmente isso aqui pode ser otimizado para o firefox */
+	/** @TODO   provavelmente isso aqui pode ser otimizado para o firefox . 
+	Sem isso fica mais fluido o movimento de drag
+	*/
 	if (this.target.graph.app.activeControl instanceof GraphApp.Control.Navigation) {
 		this.target.nodesFromHere.forEach(function (edge) {
 			edge.updatePoints();
