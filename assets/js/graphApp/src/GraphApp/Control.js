@@ -10,4 +10,10 @@ Defines that represents user interaction with the application.
 */
 GraphApp.Control = function () {
 	
+	this.enable = function () {
+		console.error("Enable method not implemented!");
+	};
+	this.disable = function () {
+		console.error("Disable method not implemented!");
+	};
 };

@@ -10,5 +10,8 @@ $(document).ready(
 		window.n2 = graphApp.graph.createNode(100, 20);
 		window.n1 = graphApp.graph.createNode(10, 300);
 		window.ed = graphApp.graph.createEdge(n1, n2);
+
+		window.control = new GraphApp.Control.NodeDraw();
+		window.graphApp.changeControlTo(window.control);
 	}
 );

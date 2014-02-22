@@ -48,4 +48,16 @@ var GraphApp = function (canvasHandler) {
 		return true;
 	};
 
+	/** changes the application control to other one */
+	this.changeControlTo = function (control) {
+		if (control instanceof GraphApp.Control) {
+			this.activeControl.disable();
+			this.activeControl = control;
+			control.app = this;
+			control.enable();
+			return true;
+		}
+		return false;
+	};
+
 };

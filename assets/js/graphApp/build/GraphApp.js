@@ -49,6 +49,18 @@ var GraphApp = function (canvasHandler) {
 		return true;
 	};
 
+	/** changes the application control to other one */
+	this.changeControlTo = function (control) {
+		if (control instanceof GraphApp.Control) {
+			this.activeControl.disable();
+			this.activeControl = control;
+			control.app = this;
+			control.enable();
+			return true;
+		}
+		return false;
+	};
+
 };
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
@@ -62,6 +74,12 @@ Defines that represents user interaction with the application.
 */
 GraphApp.Control = function () {
 	
+	this.enable = function () {
+		console.error("Enable method not implemented!");
+	};
+	this.disable = function () {
+		console.error("Disable method not implemented!");
+	};
 };"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
@@ -140,7 +158,8 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 
 	this.shape.on("mousedown.dragedge", function (event) {
 		var activeControl = this.holder.graph.app.activeControl;
-		if (! activeControl instanceof GraphApp.Control.Navigation) {
+		
+		if (!(activeControl instanceof GraphApp.Control.Navigation)) {
 			return;	//this shall not continue if we are not navigating
 		}
 		var handler = new GraphApp.Handler.DragEdge(event, this.holder);
@@ -150,7 +169,7 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 
 	this.shape.on("dblclick.restorecurve",  function (event) {
 		var activeControl = this.holder.graph.app.activeControl;
-		if (! activeControl instanceof GraphApp.Control.Navigation) {
+		if (!(activeControl instanceof GraphApp.Control.Navigation)) {
 			return;	//this shall not continue if we are not navigating
 		}
 		var handler = new GraphApp.Handler.DblClickEdge(event, this.holder);
@@ -319,8 +338,12 @@ GraphApp.Node = function (x, y) {
 	};
 
 	this.shape.on("dragstart dragmove dragend", function (e) {
-		var handler = new GraphApp.Handler.DragNode(e, this.holder);
-		console.assert(handler.details.success);
+		/** @TODO avoid dragging when not in navigation */
+		var activeControl = this.holder.graph.app.activeControl;
+		if (activeControl instanceof GraphApp.Control.Navigation) {
+			var handler = new GraphApp.Handler.DragNode(e, this.holder);
+			console.assert(handler.details.success);
+		}
 	});
 
 };/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
@@ -418,6 +441,12 @@ GraphApp.Control.Navigation = function () {
 	this.getName = function () {
 		return this.name;
 	};
+
+	this.enable = function () {
+	};
+
+	this.disable = function () {
+	};
 };
 GraphApp.Control.Navigation.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
@@ -433,11 +462,27 @@ GraphApp.Control.NodeDraw = function () {
 	
 	/* name of the control */
 	this.nameControl = "NodeDraw";
+	this.app = undefined;
 
 	/* returns the name of the control */
 	this.getName = function () {
 		return this.name;
 	};
+
+	this.enable = function () {
+		this.app.stage.kineticStage.on("click.nodedraw", this.createNode);
+	};
+
+	this.disable = function () {
+		this.app.stage.kineticStage.off("click.NodeDraw");
+	};
+
+	this.createNode = function () {
+		console.log("createNode");
+	};
+
+
+
 };
 GraphApp.Control.NodeDraw.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
@@ -531,7 +576,7 @@ GraphApp.Handler.DblClickEdge = function (event, target) {
 	* the original position
 	*/
 	this.restoreCurve = function () {
-		/** CODIGO PERIGOSO */
+		console.debug("restoring edge");
 		var handler = this;
 		var animation = new Kinetic.Animation(function () {
 			//console.debug("animation");
@@ -585,7 +630,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 	this.event = event;
 	this.target = target;
 	this.interval = undefined;
-
+	console.debug("drag edge");
 
 	/** Executes a animation  that curves the line until the control point
 	* reaches the mouse position 
@@ -602,7 +647,6 @@ GraphApp.Handler.DragEdge = function (event, target) {
 			/** @TODO é necessário fazer o calculo de animação. 
 			Como ele é demorado para alinhar, vou fazer depois */
 			target.curveModified = true;
-			var actualPoints = handler.target.shape.getPoints();
 			var edgeOrigin = handler.target.origin;
 			var edgeTarget = handler.target.target;
 			var points = [];
@@ -612,9 +656,8 @@ GraphApp.Handler.DragEdge = function (event, target) {
 			points[3] = mousePosition.y;
 			points[4] = edgeTarget.shape.getX();
 			points[5] = edgeTarget.shape.getY();
-			
 			handler.target.shape.setPoints(points);
-			handler.target.graph.stage.draw();	
+			handler.target.graph.stage.draw();
 			this.stop();
 		},
 		handler.target.graph.stage);
@@ -634,6 +677,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 
 	/** Sets a function that executes the animation */
 	this.run = function () {
+		console.log("running");
 		var curveMousePosition = this.curveToMousePosition;
 		var thisHandler = this;
 		this.interval = setInterval(function () {

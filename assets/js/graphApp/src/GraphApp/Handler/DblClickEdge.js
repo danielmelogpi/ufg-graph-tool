@@ -17,7 +17,7 @@ GraphApp.Handler.DblClickEdge = function (event, target) {
 	* the original position
 	*/
 	this.restoreCurve = function () {
-		/** CODIGO PERIGOSO */
+		console.debug("restoring edge");
 		var handler = this;
 		var animation = new Kinetic.Animation(function () {
 			//console.debug("animation");

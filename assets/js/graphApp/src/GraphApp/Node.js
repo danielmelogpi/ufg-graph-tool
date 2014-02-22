@@ -40,8 +40,12 @@ GraphApp.Node = function (x, y) {
 	};
 
 	this.shape.on("dragstart dragmove dragend", function (e) {
-		var handler = new GraphApp.Handler.DragNode(e, this.holder);
-		console.assert(handler.details.success);
+		/** @TODO avoid dragging when not in navigation */
+		var activeControl = this.holder.graph.app.activeControl;
+		if (activeControl instanceof GraphApp.Control.Navigation) {
+			var handler = new GraphApp.Handler.DragNode(e, this.holder);
+			console.assert(handler.details.success);
+		}
 	});
 
 };

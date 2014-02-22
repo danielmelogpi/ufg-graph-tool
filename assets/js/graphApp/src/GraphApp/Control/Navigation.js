@@ -17,5 +17,11 @@ GraphApp.Control.Navigation = function () {
 	this.getName = function () {
 		return this.name;
 	};
+
+	this.enable = function () {
+	};
+
+	this.disable = function () {
+	};
 };
 GraphApp.Control.Navigation.prototype =  new GraphApp.Control();
