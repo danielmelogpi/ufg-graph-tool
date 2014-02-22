@@ -74,8 +74,22 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		this.shape.setPoints(this.points);
 	};
 
-	this.shape.on("mousedown", function (event) {
+	this.shape.on("mousedown.dragedge", function (event) {
+		var activeControl = this.holder.graph.app.activeControl;
+		if (! activeControl instanceof GraphApp.Control.Navigation) {
+			return;	//this shall not continue if we are not navigating
+		}
 		var handler = new GraphApp.Handler.DragEdge(event, this.holder);
+		handler.run();
+		console.assert(handler.details.success);
+	});
+
+	this.shape.on("dblclick.restorecurve",  function (event) {
+		var activeControl = this.holder.graph.app.activeControl;
+		if (! activeControl instanceof GraphApp.Control.Navigation) {
+			return;	//this shall not continue if we are not navigating
+		}
+		var handler = new GraphApp.Handler.DblClickEdge(event, this.holder);
 		handler.run();
 		console.assert(handler.details.success);
 	});

@@ -1,4 +1,4 @@
-/*! GraphApp 19-02-2014 */
+/*! GraphApp 22-02-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -138,8 +138,22 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		this.shape.setPoints(this.points);
 	};
 
-	this.shape.on("mousedown", function (event) {
+	this.shape.on("mousedown.dragedge", function (event) {
+		var activeControl = this.holder.graph.app.activeControl;
+		if (! activeControl instanceof GraphApp.Control.Navigation) {
+			return;	//this shall not continue if we are not navigating
+		}
 		var handler = new GraphApp.Handler.DragEdge(event, this.holder);
+		handler.run();
+		console.assert(handler.details.success);
+	});
+
+	this.shape.on("dblclick.restorecurve",  function (event) {
+		var activeControl = this.holder.graph.app.activeControl;
+		if (! activeControl instanceof GraphApp.Control.Navigation) {
+			return;	//this shall not continue if we are not navigating
+		}
+		var handler = new GraphApp.Handler.DblClickEdge(event, this.holder);
 		handler.run();
 		console.assert(handler.details.success);
 	});
@@ -499,6 +513,65 @@ GraphApp.Graph.Style.Node = function () {
 	this.strokeWidth = 2;
 };
 GraphApp.Graph.Style.Node.prototype = new GraphApp.Graph.Style();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp,Kinetic */
+
+/**
+* Deals with dblclicking an edge when navigating. 
+* @param <GraphApp.Edge>   target     who was dragged
+* @param <Object> event    the dragging event
+* @return void
+*/
+GraphApp.Handler.DblClickEdge = function (event, target) {
+	"use strict";
+	this.event = event;
+	this.target = target;
+
+	/** 
+	* Executes an animation that restores the control point of the edge to
+	* the original position
+	*/
+	this.restoreCurve = function () {
+		/** CODIGO PERIGOSO */
+		var handler = this;
+		var animation = new Kinetic.Animation(function () {
+			//console.debug("animation");
+			target.curveModified = false; //curve is no longer modified
+			
+			var edgeOrigin = handler.target.origin;
+			var edgeTarget = handler.target.target;
+			var points = [];
+			points[0] = edgeOrigin.shape.getX();
+			points[1] = edgeOrigin.shape.getY();
+			points[2] = edgeTarget.shape.getX(); //control point matches the end
+			points[3] = edgeTarget.shape.getY();
+			points[4] = edgeTarget.shape.getX();
+			points[5] = edgeTarget.shape.getY();
+			
+			handler.target.shape.setPoints(points);
+			handler.target.graph.stage.draw();
+			//handler.stop();
+		},
+		this.target.graph.stage);
+		animation.start();
+
+	};
+
+	/** Stops the curving animation execution */
+	this.stop = function (event) {
+		//console.debug("stopping");
+	};
+
+	/** Sets a function that executes the animation */
+	this.run = function () {
+		//console.debug("running");
+		this.restoreCurve();
+	};
+	
+	this.details.success = true;
+
+}; //end of object
+GraphApp.Handler.DblClickEdge.prototype = new GraphApp.Handler(undefined);
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp, $,Kinetic */
 
 /**
@@ -512,7 +585,6 @@ GraphApp.Handler.DragEdge = function (event, target) {
 	this.event = event;
 	this.target = target;
 	this.interval = undefined;
-	console.debug(graphApp.stage.kineticStage.getPointerPosition());
 
 
 	/** Executes a animation  that curves the line until the control point
@@ -566,7 +638,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 		var thisHandler = this;
 		this.interval = setInterval(function () {
 			curveMousePosition(thisHandler);
-		}, 50);
+		}, 10);
 		var interval = this.interval;
 		$(window).on("mouseup.dragEdge", [interval], this.stop);
 	};

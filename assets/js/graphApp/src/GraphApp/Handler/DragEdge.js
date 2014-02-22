@@ -12,7 +12,6 @@ GraphApp.Handler.DragEdge = function (event, target) {
 	this.event = event;
 	this.target = target;
 	this.interval = undefined;
-	console.debug(graphApp.stage.kineticStage.getPointerPosition());
 
 
 	/** Executes a animation  that curves the line until the control point
@@ -66,7 +65,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 		var thisHandler = this;
 		this.interval = setInterval(function () {
 			curveMousePosition(thisHandler);
-		}, 50);
+		}, 10);
 		var interval = this.interval;
 		$(window).on("mouseup.dragEdge", [interval], this.stop);
 	};
