@@ -1,5 +1,3 @@
-"use strict";
-
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
 
@@ -7,6 +5,7 @@
 * This object retrieves the reference to Kinetic Js Spline, 
 * that is the visual node */
 GraphApp.Edge = function (nodeOrigin, nodeTarget) {
+	"use strict";
 	this.Iam = "GraphApp.Edge";
 	this.graph = undefined;
 

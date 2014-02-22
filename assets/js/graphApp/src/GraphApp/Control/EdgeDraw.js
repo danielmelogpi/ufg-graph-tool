@@ -15,6 +15,7 @@ GraphApp.Control.EdgeDraw = function () {
 	this.nameControl = "EdgeDraw";
 	this.app = undefined;
 	this.operationNodes = [];
+	this.followLine = undefined;
 
 	/* returns the name of the control */
 	this.getName = function () {
@@ -33,14 +34,20 @@ GraphApp.Control.EdgeDraw = function () {
 		var control = node.holder.graph.app.activeControl;
 		if (control.operationNodes.length === 0) {
 			control.operationNodes.push(node.holder);
+			control.followLine = new GraphApp.FollowLine(node.holder);
+			control.followLine.startUpdate();
 		}
 		else if (control.operationNodes.length === 1) {
 			control.operationNodes.push(node.holder);
 			control.createEdge();
 			control.operationNodes.length = 0;
+			control.followLine.stopUpdate();
+			control.followLine = undefined;
 		}
 		else { //in case of caos
 			control.operationNodes.length = 0;
+			control.followLine.stopUpdate();
+			control.followLine = undefined;
 		}
 	};
 
@@ -51,7 +58,10 @@ GraphApp.Control.EdgeDraw = function () {
 
 
 	this.disable = function () {
-		
+		var control = this;
+		this.app.graph.nodes.forEach(function (node) {
+			node.shape.off("click.edgedraw", control.addToOperation);
+		});
 	};
 };
 GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();

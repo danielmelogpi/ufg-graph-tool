@@ -44,6 +44,9 @@ var GraphApp = function (canvasHandler) {
 		else if (shape instanceof Kinetic.Rect) {
 			this.layer.addShape(shape);
 		}
+		else if (shape instanceof Kinetic.Line) {
+			this.layer.addShape(shape);
+		}
 		else {
 			console.error("There is no layer configured to such shape");
 			return false;

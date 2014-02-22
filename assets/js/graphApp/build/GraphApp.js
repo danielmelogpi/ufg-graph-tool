@@ -45,6 +45,9 @@ var GraphApp = function (canvasHandler) {
 		else if (shape instanceof Kinetic.Rect) {
 			this.layer.addShape(shape);
 		}
+		else if (shape instanceof Kinetic.Line) {
+			this.layer.addShape(shape);
+		}
 		else {
 			console.error("There is no layer configured to such shape");
 			return false;
@@ -84,15 +87,14 @@ GraphApp.Control = function () {
 	this.disable = function () {
 		console.error("Disable method not implemented!");
 	};
-};"use strict";
-
-/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
 
 /** Defines an edge and it's properties.
 * This object retrieves the reference to Kinetic Js Spline, 
 * that is the visual node */
 GraphApp.Edge = function (nodeOrigin, nodeTarget) {
+	"use strict";
 	this.Iam = "GraphApp.Edge";
 	this.graph = undefined;
 
@@ -221,6 +223,70 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 	return  line;
 //};
 /**/
+};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global Kinetic, GraphApp , $*/
+
+/** Defines an edge and it's properties.
+* This object retrieves the reference to Kinetic Js Spline, 
+* that is the visual node */
+GraphApp.FollowLine = function (anchor) {
+	"use strict";
+	this.Iam = "GraphApp.FollowLine";
+	this.anchor = anchor;
+	this.lastDetectedMouse = undefined;
+	this.shape = undefined;
+	this.graph = anchor.graph;
+
+	(function (followLine) {
+		var x = followLine.anchor.shape.getX();
+		var y = followLine.anchor.shape.getY();
+
+		// COLOCAR STYLE ADEQUADO!
+		followLine.shape = new Kinetic.Line({
+			points: [x, y, x, y],
+			stroke: "red",
+			strokeWidth: 2,
+			lineCap: "round",
+			lineJoin: "round"
+		});
+
+		followLine.shape.holder = followLine;
+		followLine.graph.app.addShape(followLine.shape);
+	}
+	)(this);
+
+	// atualiza a follow line para a posição atual do mouse
+	this.updateToMouse = function (evt) {
+		console.debug("updating crap!");
+		var followLine = evt.data[0];
+		var mouse = new GraphApp.Input.Mouse(followLine.graph.app.stage);
+		var mousePosition = mouse.getMousePosition();
+		followLine.lastDetectedMouse = mousePosition;
+		
+		var points = followLine.shape.getPoints();
+		console.log(points[1]);
+		var x = mousePosition.x - 5;
+		var y = mousePosition.y - 5;
+
+		points[1] = {x: x, y: y};
+
+		console.log(mousePosition);
+		console.log(points[1]);
+		followLine.shape.setPoints(points);
+		followLine.graph.app.stage.draw();
+	};
+
+	this.startUpdate = function () {
+		console.debug("starting update");
+		$(this.graph.app.canvasHandler).children().on("mousemove.updatefollowline", [this], this.updateToMouse);
+	};
+
+	this.stopUpdate = function () {
+		console.debug("stopping update");
+		$(this.graph.app.canvasHandler).children().off("mousemove.updatefollowline");
+		this.shape.remove();
+		this.graph.stage.draw();
+	};
 };/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
@@ -425,6 +491,7 @@ GraphApp.Control.EdgeDraw = function () {
 	this.nameControl = "EdgeDraw";
 	this.app = undefined;
 	this.operationNodes = [];
+	this.followLine = undefined;
 
 	/* returns the name of the control */
 	this.getName = function () {
@@ -443,14 +510,20 @@ GraphApp.Control.EdgeDraw = function () {
 		var control = node.holder.graph.app.activeControl;
 		if (control.operationNodes.length === 0) {
 			control.operationNodes.push(node.holder);
+			control.followLine = new GraphApp.FollowLine(node.holder);
+			control.followLine.startUpdate();
 		}
 		else if (control.operationNodes.length === 1) {
 			control.operationNodes.push(node.holder);
 			control.createEdge();
 			control.operationNodes.length = 0;
+			control.followLine.stopUpdate();
+			control.followLine = undefined;
 		}
 		else { //in case of caos
 			control.operationNodes.length = 0;
+			control.followLine.stopUpdate();
+			control.followLine = undefined;
 		}
 	};
 
@@ -461,7 +534,10 @@ GraphApp.Control.EdgeDraw = function () {
 
 
 	this.disable = function () {
-		
+		var control = this;
+		this.app.graph.nodes.forEach(function (node) {
+			node.shape.off("click.edgedraw", control.addToOperation);
+		});
 	};
 };
 GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
