@@ -33,7 +33,7 @@ GraphApp.Control.NodeDraw = function () {
 		var mouse = new GraphApp.Input.Mouse(control.app.stage);
 		var mousePosition = mouse.getMousePosition();
 
-		/** @TODO 	Corrigir problemas quando o scale não é 1 */
+		/** @TODO    Corrigir problemas quando o scale não é 1 */
 		var x = mousePosition.x / control.app.stage.kineticStage.getScaleX();
 		var y = mousePosition.y / control.app.stage.kineticStage.getScaleY();
 
