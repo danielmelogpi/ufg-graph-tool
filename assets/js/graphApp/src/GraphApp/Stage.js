@@ -12,9 +12,11 @@ GraphApp.Stage = function (canvasHandler) {
 		height: window.screen.availHeight,
 		draggable: false
 	});
+	this.layers = [];
 
 	/** Adds a layer to the Kinetics Stage */
 	this.addLayer = function (layer) {
+		this.layers.push(layer);
 		return this.kineticStage.add(layer.kineticLayer);
 	};
 
