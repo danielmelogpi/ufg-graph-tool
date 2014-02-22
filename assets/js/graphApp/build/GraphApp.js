@@ -240,14 +240,14 @@ GraphApp.FollowLine = function (anchor) {
 	(function (followLine) {
 		var x = followLine.anchor.shape.getX();
 		var y = followLine.anchor.shape.getY();
-
+		var style = new GraphApp.Graph.Style.FollowLine();
 		// COLOCAR STYLE ADEQUADO!
 		followLine.shape = new Kinetic.Line({
 			points: [x, y, x, y],
-			stroke: "red",
-			strokeWidth: 2,
-			lineCap: "round",
-			lineJoin: "round"
+			stroke: style.stroke,
+			strokeWidth: style.strokeWidth,
+			lineCap: style.lineCap,
+			lineJoin: style.lineJoin
 		});
 
 		followLine.shape.holder = followLine;
@@ -257,32 +257,28 @@ GraphApp.FollowLine = function (anchor) {
 
 	// atualiza a follow line para a posição atual do mouse
 	this.updateToMouse = function (evt) {
-		console.debug("updating crap!");
 		var followLine = evt.data[0];
 		var mouse = new GraphApp.Input.Mouse(followLine.graph.app.stage);
 		var mousePosition = mouse.getMousePosition();
 		followLine.lastDetectedMouse = mousePosition;
 		
 		var points = followLine.shape.getPoints();
-		console.log(points[1]);
+		
+		/** @TODO the diference in position relatively to the mouse needs improvement */
 		var x = mousePosition.x - 5;
-		var y = mousePosition.y - 5;
+		var y = mousePosition.y + 5;
 
 		points[1] = {x: x, y: y};
 
-		console.log(mousePosition);
-		console.log(points[1]);
 		followLine.shape.setPoints(points);
 		followLine.graph.app.stage.draw();
 	};
 
 	this.startUpdate = function () {
-		console.debug("starting update");
 		$(this.graph.app.canvasHandler).children().on("mousemove.updatefollowline", [this], this.updateToMouse);
 	};
 
 	this.stopUpdate = function () {
-		console.debug("stopping update");
 		$(this.graph.app.canvasHandler).children().off("mousemove.updatefollowline");
 		this.shape.remove();
 		this.graph.stage.draw();
@@ -670,6 +666,22 @@ GraphApp.Graph.Colors.prototype = {};"use strict";
 */
 GraphApp.Graph.Style.Edge = function () {
 	this.radius = 12;
+	this.strokeWidth = 2;
+	this.lineCap = "round";
+	this.lineJoin = "round";
+};
+GraphApp.Graph.Style.Edge.prototype = new GraphApp.Graph.Style();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp */
+
+/**
+* Defines a default style to be used in the followLines.
+* A style is something that can be applied by a shape. 
+* The shape decides how to use the attributes
+* @prototype <GraphApp.Graph.Style>
+*/
+GraphApp.Graph.Style.FollowLine = function () {
+	"use strict";
+	this.stroke = "red";
 	this.strokeWidth = 2;
 	this.lineCap = "round";
 	this.lineJoin = "round";
