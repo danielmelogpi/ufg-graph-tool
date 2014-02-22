@@ -11,7 +11,7 @@ $(document).ready(
 		// window.n1 = graphApp.graph.createNode(10, 300);
 		// window.ed = graphApp.graph.createEdge(n1, n2);
 
-		// window.control = new GraphApp.Control.NodeDraw();
-		// window.graphApp.changeControlTo(window.control);
+		window.control = new GraphApp.Control.NodeDraw();
+		window.graphApp.changeControlTo(window.control);
 	}
 );
