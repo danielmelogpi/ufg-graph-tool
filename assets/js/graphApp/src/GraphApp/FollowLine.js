@@ -16,7 +16,7 @@ GraphApp.FollowLine = function (anchor) {
 		var x = followLine.anchor.shape.getX();
 		var y = followLine.anchor.shape.getY();
 		var style = new GraphApp.Graph.Style.FollowLine();
-		// COLOCAR STYLE ADEQUADO!
+		
 		followLine.shape = new Kinetic.Line({
 			points: [x, y, x, y],
 			stroke: style.stroke,

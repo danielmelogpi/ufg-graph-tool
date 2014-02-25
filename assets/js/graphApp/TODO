@@ -13,3 +13,7 @@ GraphApp.Control.NodeDraw
 
 GraphApp.FollowLine
 	this.updateToMouse /** @TODO the diference in position relatively to the mouse needs improvement */
+
+GraphAPP.Graph
+	Checagem de instancias dos objetos das formas. Os objetos passados para adição no grafo tem a 
+	instancia correta?
