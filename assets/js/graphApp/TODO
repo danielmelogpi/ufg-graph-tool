@@ -15,5 +15,8 @@ GraphApp.FollowLine
 	this.updateToMouse /** @TODO the diference in position relatively to the mouse needs improvement */
 
 GraphAPP.Graph
-	Checagem de instancias dos objetos das formas. Os objetos passados para adição no grafo tem a 
-	instancia correta?
+	Checagem de instancias dos objetos das formas. 
+	Os objetos passados para adição no grafo tem a instancia correta?
+
+GraphApp.Stage
+	this.addSelectionMark	// @TODO fork the layers

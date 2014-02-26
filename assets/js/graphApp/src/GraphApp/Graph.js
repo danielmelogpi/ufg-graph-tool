@@ -31,16 +31,20 @@ GraphApp.Graph = function () {
 	this.createNode = function (x, y) {
 		var newNode =  new GraphApp.Node(x, y);
 		newNode.graph = this;
+		newNode.selectionShape = (new GraphApp.SelectedMark(newNode)).enableMark();
 		this.nodes.push(newNode);
 		this.app.addShape(newNode.shape);
+
 		return newNode;
 	};
 
 	this.createEdge = function (nodeOrigin, nodeTarget) {
 		var newEdge =  new GraphApp.Edge(nodeOrigin, nodeTarget);
 		newEdge.graph = this;
+		newEdge.selectionShape = (new GraphApp.SelectedMark(newEdge)).enableMark();
 		this.edges.push(newEdge);
 		this.app.addShape(newEdge.shape);
 		return newEdge;
 	};
+
 };

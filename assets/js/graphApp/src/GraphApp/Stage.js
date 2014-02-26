@@ -24,4 +24,9 @@ GraphApp.Stage = function (canvasHandler) {
 	this.draw = function () {
 		return this.kineticStage.draw();
 	};
+
+	// @TODO fork the layers
+	this.addSelectionMark = function () {
+
+	};
 };

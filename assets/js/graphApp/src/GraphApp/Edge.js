@@ -16,6 +16,7 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 	this.id = Math.random();
 	this.isRemoved = false;
 	this.curving = false;
+	this.selectionShape = undefined;
 
 	nodeOrigin.nodesFromHere.push(this);
 	nodeTarget.nodesToHere.push(this);
