@@ -15,7 +15,7 @@ GraphApp.Node = function (x, y) {
 	this.isRemoved = false;
 	this.nodesFromHere = [];
 	this.nodesToHere = [];
-	this.selectionShape = undefined;
+	this.selectionMark = undefined;
 
 	var colors = this.style.colors;
 	this.shape = new Kinetic.Circle({
@@ -51,7 +51,8 @@ GraphApp.Node = function (x, y) {
 	this.shape.on("click.selection", function (e) {
 		var activeControl = this.holder.graph.app.activeControl;
 		if (activeControl instanceof GraphApp.Control.Navigation) {
-
+			var handler = new GraphApp.Handler.Selection(e, this.holder);
+			handler.run();
 		}
 	});
 

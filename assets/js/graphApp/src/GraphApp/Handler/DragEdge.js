@@ -40,6 +40,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 			points[5] = edgeTarget.shape.getY();
 			handler.target.shape.setPoints(points);
 			handler.target.graph.stage.draw();
+			handler.target.selectionMark.updateMarkConfig();
 			this.stop();
 		},
 		handler.target.graph.stage);

@@ -10,4 +10,17 @@ GraphApp.Handler = function (event, target) {
 	this.event = event;
 	this.target = target;
 	this.details = {};
+
+	this.hasShift = function () {
+		return this.event.shiftKey;
+	};
+
+	this.hasCtrl = function () {
+		return this.event.ctrlKey;
+	};
+
+	this.hasAlt = function () {
+		return this.event.altKey;
+	};
+
 };

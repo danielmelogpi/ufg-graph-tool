@@ -13,16 +13,19 @@ var GraphApp = function (canvasHandler) {
 	
 	this.Iam = "GraphApp";
 	this.stage = new GraphApp.Stage(canvasHandler);
+	this.graph = new GraphApp.Graph();
 	this.layer = new GraphApp.Layer();
 	this.nodeLayer = new GraphApp.Layer();
 	this.edgeLayer = new GraphApp.Layer();
 	this.selectionLayer = new GraphApp.Layer();
-
 	this.activeControl = new GraphApp.Control.Navigation();
 
-	this.graph = new GraphApp.Graph();
+	
 	this.graph.app = this;
 	this.graph.stage = this.stage;
+
+	this.stage.app = this;
+	this.stage.addEventsToCanvas();
 
 	this.canvasHandler = document.getElementById(canvasHandler);
 	
@@ -48,7 +51,7 @@ var GraphApp = function (canvasHandler) {
 			this.layer.addShape(shape);
 		}
 		else {
-			console.error("There is no layer configured to such shape");
+			console.warn("There is no layer configured to such shape.");
 			return false;
 		}
 		this.stage.draw();

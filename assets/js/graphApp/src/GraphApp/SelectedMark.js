@@ -17,15 +17,23 @@ GraphApp.SelectedMark = function (anchor) {
 
 	/** triggers the shapes genesis */
 	this.enableMark = function () {
-		var config = this.calculateInitialConfig();
+		var config = this.calculateConfig();
 		this.createMarkShape(config);
 		return this;
 	};
 
+	this.updateMarkConfig = function () {
+		var config = this.calculateConfig();
+		this.shape.setX(config.x);
+		this.shape.setY(config.y);
+		this.shape.setWidth(config.width);
+		this.shape.setHeight(config.height);
+	}
+
 	/** Calcutes x, y, width and height for the selection mark (a Kinetic.Rect) *
 	* @return {} object with parameters for the mark
 	*/
-	this.calculateInitialConfig = function () {
+	this.calculateConfig = function () {
 		var padding = 4;
 		
 		var config = {};
@@ -60,7 +68,7 @@ GraphApp.SelectedMark = function (anchor) {
 				config.x = coord1.getX() - padding;
 				config.y = coord1.getY() - padding;
 			}
-			console.debug(config);
+
 			return config;
 
 		}
@@ -68,6 +76,10 @@ GraphApp.SelectedMark = function (anchor) {
 			return false;
 		}
 
+	};
+
+	this.toogle = function () {
+		this.shape.toogle(); //this toogle is not a Kinetic native. 
 	};
 
 	// Esses dois métodos poderiam ser unificados
@@ -131,7 +143,25 @@ GraphApp.SelectedMark = function (anchor) {
 		});
 
 		this.shape.holder = this;
+		this.anchor.graph.app.stage.addSelectionMark(this.shape);
+		this.shape.toogle = this.toogleToShape();
 	};
+
+	/** returns a function that toogles the visibility of the mark */
+	this.toogleToShape = function () {
+		return function () {
+			if (this.getVisible()) {
+				this.hide();
+				console.debug("hide selection");
+			}
+			else {
+				this.show();
+				console.debug("show selection");
+			}
+			this.getStage().draw();
+		};
+	};
+
 
 
 };

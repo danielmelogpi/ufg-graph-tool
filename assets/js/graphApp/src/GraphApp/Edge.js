@@ -16,7 +16,7 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 	this.id = Math.random();
 	this.isRemoved = false;
 	this.curving = false;
-	this.selectionShape = undefined;
+	this.selectionMark = undefined;
 
 	nodeOrigin.nodesFromHere.push(this);
 	nodeTarget.nodesToHere.push(this);
@@ -85,6 +85,14 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		console.assert(handler.details.success);
 	});
 
+	this.shape.on("click.selection", function (e) {
+		var activeControl = this.holder.graph.app.activeControl;
+		if (activeControl instanceof GraphApp.Control.Navigation) {
+			var handler = new GraphApp.Handler.Selection(e, this.holder);
+			handler.run();
+		}
+	});
+
 	this.shape.on("dblclick.restorecurve",  function (event) {
 		var activeControl = this.holder.graph.app.activeControl;
 		if (!(activeControl instanceof GraphApp.Control.Navigation)) {
@@ -95,44 +103,4 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		console.assert(handler.details.success);
 	});
 
-/*
-	this.shape.on('mouseover', function(){
-		//this.setStrokeWidth(12);		//@TODO criar objeto de configurações
-		if(!this.selected){
-			//this.setStroke(colors.HOVER_DEFAULT_STROKE);
-			stage.draw();
-		}
-		mouseToPointer();
-	});
-
-	this.shape.on('mouseout', function(){
-		if(!this.selected){
-			//this.setStroke(this.actualLook.stroke);
-			stage.draw();
-		}
-		mouseToDefault();
-	});
-*/
-	/*this.shape.on("mousedown", function(evt){
-		if(evt.altKey  && evt.ctrlKey){
-			mouseIsDown = true;
-			blockLastMouse = false;
-			this.flexible.start();	
-		}
-	});
-
-	this.shape.on("mouseup", function(){
-		mouseIsDown = false;
-		lastMouseForCurvingLine = getMousePos();
-		blockLastMouse = true;
-		//this.flexible.stop();
-	});
-	this.shape.on( "dblclick.restore-curve", restoreCurve);
-
-	this.shape.on("click.selectToogle", selectionHandler);
-
-	line.selectionRect = defaultSelectionRect(line);
-	return  line;
-//};
-/**/
 };

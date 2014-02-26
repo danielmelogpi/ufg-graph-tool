@@ -14,16 +14,19 @@ var GraphApp = function (canvasHandler) {
 	
 	this.Iam = "GraphApp";
 	this.stage = new GraphApp.Stage(canvasHandler);
+	this.graph = new GraphApp.Graph();
 	this.layer = new GraphApp.Layer();
 	this.nodeLayer = new GraphApp.Layer();
 	this.edgeLayer = new GraphApp.Layer();
 	this.selectionLayer = new GraphApp.Layer();
-
 	this.activeControl = new GraphApp.Control.Navigation();
 
-	this.graph = new GraphApp.Graph();
+	
 	this.graph.app = this;
 	this.graph.stage = this.stage;
+
+	this.stage.app = this;
+	this.stage.addEventsToCanvas();
 
 	this.canvasHandler = document.getElementById(canvasHandler);
 	
@@ -49,7 +52,7 @@ var GraphApp = function (canvasHandler) {
 			this.layer.addShape(shape);
 		}
 		else {
-			console.error("There is no layer configured to such shape");
+			console.warn("There is no layer configured to such shape.");
 			return false;
 		}
 		this.stage.draw();
@@ -105,7 +108,7 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 	this.id = Math.random();
 	this.isRemoved = false;
 	this.curving = false;
-	this.selectionShape = undefined;
+	this.selectionMark = undefined;
 
 	nodeOrigin.nodesFromHere.push(this);
 	nodeTarget.nodesToHere.push(this);
@@ -174,6 +177,14 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		console.assert(handler.details.success);
 	});
 
+	this.shape.on("click.selection", function (e) {
+		var activeControl = this.holder.graph.app.activeControl;
+		if (activeControl instanceof GraphApp.Control.Navigation) {
+			var handler = new GraphApp.Handler.Selection(e, this.holder);
+			handler.run();
+		}
+	});
+
 	this.shape.on("dblclick.restorecurve",  function (event) {
 		var activeControl = this.holder.graph.app.activeControl;
 		if (!(activeControl instanceof GraphApp.Control.Navigation)) {
@@ -184,46 +195,6 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		console.assert(handler.details.success);
 	});
 
-/*
-	this.shape.on('mouseover', function(){
-		//this.setStrokeWidth(12);		//@TODO criar objeto de configurações
-		if(!this.selected){
-			//this.setStroke(colors.HOVER_DEFAULT_STROKE);
-			stage.draw();
-		}
-		mouseToPointer();
-	});
-
-	this.shape.on('mouseout', function(){
-		if(!this.selected){
-			//this.setStroke(this.actualLook.stroke);
-			stage.draw();
-		}
-		mouseToDefault();
-	});
-*/
-	/*this.shape.on("mousedown", function(evt){
-		if(evt.altKey  && evt.ctrlKey){
-			mouseIsDown = true;
-			blockLastMouse = false;
-			this.flexible.start();	
-		}
-	});
-
-	this.shape.on("mouseup", function(){
-		mouseIsDown = false;
-		lastMouseForCurvingLine = getMousePos();
-		blockLastMouse = true;
-		//this.flexible.stop();
-	});
-	this.shape.on( "dblclick.restore-curve", restoreCurve);
-
-	this.shape.on("click.selectToogle", selectionHandler);
-
-	line.selectionRect = defaultSelectionRect(line);
-	return  line;
-//};
-/**/
 };/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp , $*/
 
@@ -308,26 +279,22 @@ GraphApp.Graph = function () {
 		return this.nodes;
     };
 
-    this.addNode = function (node) {
-		if (node instanceof GraphApp.Graph.Node) {
-			this.nodes.push(node);
-		}
-	};
-
+	// given a position, creates a node there
 	this.createNode = function (x, y) {
 		var newNode =  new GraphApp.Node(x, y);
 		newNode.graph = this;
-		newNode.selectionShape = (new GraphApp.SelectedMark(newNode)).enableMark();
+		newNode.selectionMark = (new GraphApp.SelectedMark(newNode)).enableMark();
 		this.nodes.push(newNode);
 		this.app.addShape(newNode.shape);
-
+		
 		return newNode;
 	};
 
+	// creates an edge, given an <GraphApp.Node> as origin and target
 	this.createEdge = function (nodeOrigin, nodeTarget) {
 		var newEdge =  new GraphApp.Edge(nodeOrigin, nodeTarget);
 		newEdge.graph = this;
-		newEdge.selectionShape = (new GraphApp.SelectedMark(newEdge)).enableMark();
+		newEdge.selectionMark = (new GraphApp.SelectedMark(newEdge)).enableMark();
 		this.edges.push(newEdge);
 		this.app.addShape(newEdge.shape);
 		return newEdge;
@@ -345,6 +312,19 @@ GraphApp.Handler = function (event, target) {
 	this.event = event;
 	this.target = target;
 	this.details = {};
+
+	this.hasShift = function () {
+		return this.event.shiftKey;
+	};
+
+	this.hasCtrl = function () {
+		return this.event.ctrlKey;
+	};
+
+	this.hasAlt = function () {
+		return this.event.altKey;
+	};
+
 };/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp */
 
@@ -384,7 +364,7 @@ GraphApp.Node = function (x, y) {
 	this.isRemoved = false;
 	this.nodesFromHere = [];
 	this.nodesToHere = [];
-	this.selectionShape = undefined;
+	this.selectionMark = undefined;
 
 	var colors = this.style.colors;
 	this.shape = new Kinetic.Circle({
@@ -420,7 +400,8 @@ GraphApp.Node = function (x, y) {
 	this.shape.on("click.selection", function (e) {
 		var activeControl = this.holder.graph.app.activeControl;
 		if (activeControl instanceof GraphApp.Control.Navigation) {
-
+			var handler = new GraphApp.Handler.Selection(e, this.holder);
+			handler.run();
 		}
 	});
 
@@ -443,15 +424,23 @@ GraphApp.SelectedMark = function (anchor) {
 
 	/** triggers the shapes genesis */
 	this.enableMark = function () {
-		var config = this.calculateInitialConfig();
+		var config = this.calculateConfig();
 		this.createMarkShape(config);
 		return this;
 	};
 
+	this.updateMarkConfig = function () {
+		var config = this.calculateConfig();
+		this.shape.setX(config.x);
+		this.shape.setY(config.y);
+		this.shape.setWidth(config.width);
+		this.shape.setHeight(config.height);
+	}
+
 	/** Calcutes x, y, width and height for the selection mark (a Kinetic.Rect) *
 	* @return {} object with parameters for the mark
 	*/
-	this.calculateInitialConfig = function () {
+	this.calculateConfig = function () {
 		var padding = 4;
 		
 		var config = {};
@@ -486,7 +475,7 @@ GraphApp.SelectedMark = function (anchor) {
 				config.x = coord1.getX() - padding;
 				config.y = coord1.getY() - padding;
 			}
-			console.debug(config);
+
 			return config;
 
 		}
@@ -494,6 +483,10 @@ GraphApp.SelectedMark = function (anchor) {
 			return false;
 		}
 
+	};
+
+	this.toogle = function () {
+		this.shape.toogle(); //this toogle is not a Kinetic native. 
 	};
 
 	// Esses dois métodos poderiam ser unificados
@@ -557,17 +550,36 @@ GraphApp.SelectedMark = function (anchor) {
 		});
 
 		this.shape.holder = this;
+		this.anchor.graph.app.stage.addSelectionMark(this.shape);
+		this.shape.toogle = this.toogleToShape();
+	};
+
+	/** returns a function that toogles the visibility of the mark */
+	this.toogleToShape = function () {
+		return function () {
+			if (this.getVisible()) {
+				this.hide();
+				console.debug("hide selection");
+			}
+			else {
+				this.show();
+				console.debug("show selection");
+			}
+			this.getStage().draw();
+		};
 	};
 
 
+
 };/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global Kinetic, GraphApp */
+/*global Kinetic, GraphApp, $ */
 /** Defines the stage where the <canvas> element is constructed */
 
 
 GraphApp.Stage = function (canvasHandler) {
 	"use strict";
 	this.Iam = "GraphApp.Stage";
+	this.canvasHandler = canvasHandler;
 	this.kineticStage = new Kinetic.Stage({
 		container: canvasHandler,
 		width: window.screen.availWidth,
@@ -575,6 +587,7 @@ GraphApp.Stage = function (canvasHandler) {
 		draggable: false
 	});
 	this.layers = [];
+	this.selectionMarks = [];
 
 	/** Adds a layer to the Kinetics Stage */
 	this.addLayer = function (layer) {
@@ -588,9 +601,19 @@ GraphApp.Stage = function (canvasHandler) {
 	};
 
 	// @TODO fork the layers
-	this.addSelectionMark = function () {
-
+	this.addSelectionMark = function (shape) {
+		this.app.addShape(shape);
+		this.selectionMarks.push(shape.holder);
 	};
+
+	this.addEventsToCanvas = function () {
+		$("#canvasHandler").children().on("click.unselectEverything", function () {
+			this.selectionMarks.forEach(function (mark) {
+				mark.shape.hide();
+			});
+		});
+	};
+	
 };"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
@@ -955,6 +978,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 			points[5] = edgeTarget.shape.getY();
 			handler.target.shape.setPoints(points);
 			handler.target.graph.stage.draw();
+			handler.target.selectionMark.updateMarkConfig();
 			this.stop();
 		},
 		handler.target.graph.stage);
@@ -1015,14 +1039,18 @@ GraphApp.Handler.DragNode = function (event, target) {
 	if (this.target.graph.app.activeControl instanceof GraphApp.Control.Navigation) {
 		this.target.nodesFromHere.forEach(function (edge) {
 			edge.updatePoints();
+			edge.selectionMark.updateMarkConfig();
 		});
 		this.target.nodesToHere.forEach(function (edge) {
 			edge.updatePoints();
+			edge.selectionMark.updateMarkConfig();
 		});
+		this.target.selectionMark.updateMarkConfig();
 		this.target.graph.stage.draw();
 	}
 
 	this.details.success = true;
+
 
 }; //end of object
 GraphApp.Handler.DragNode.prototype = new GraphApp.Handler(undefined);
@@ -1031,10 +1059,47 @@ GraphApp.Handler.DragNode.prototype = new GraphApp.Handler(undefined);
 
 /**
 * Deals with selecting and unselecting elements
+* @param <Object> event    the dragging event
+* @param <GraphApp.Node> | <GraphApp.Edge>  target     who was clicked
+* @return void
 */
 GraphApp.Handler.Selection = function (event, target) {
 	"use strict";
-	
+	this.event = event;
+	this.target = target;
+	this.details = {};
+
+	this.run = function () {
+		if (this.hasShift()) {
+			this.target.selectionMark.toogle();
+		}
+		else {
+			if (this.event.targetNode.holder.id === this.target.id) {
+				this.unselectEverythingButMe();
+			}
+			else {
+				this.unselectEverything();
+			}
+		}
+	};
+
+	this.unselectEverything = function () {
+		this.target.graph.stage.selectionMarks.forEach(function (mark) {
+			mark.shape.hide();
+		});
+	};
+
+	this.unselectEverythingButMe = function () {
+		this.target.graph.stage.selectionMarks.forEach(function (mark) {
+			if (mark.anchor.id !== this.target.id) {
+				mark.shape.hide();
+			}
+			else {
+				mark.shape.show();
+			}
+		}, this);
+	};
+
 
 };
 GraphApp.Handler.Selection.prototype = new GraphApp.Handler();

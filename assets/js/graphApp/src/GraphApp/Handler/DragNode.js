@@ -25,14 +25,18 @@ GraphApp.Handler.DragNode = function (event, target) {
 	if (this.target.graph.app.activeControl instanceof GraphApp.Control.Navigation) {
 		this.target.nodesFromHere.forEach(function (edge) {
 			edge.updatePoints();
+			edge.selectionMark.updateMarkConfig();
 		});
 		this.target.nodesToHere.forEach(function (edge) {
 			edge.updatePoints();
+			edge.selectionMark.updateMarkConfig();
 		});
+		this.target.selectionMark.updateMarkConfig();
 		this.target.graph.stage.draw();
 	}
 
 	this.details.success = true;
+
 
 }; //end of object
 GraphApp.Handler.DragNode.prototype = new GraphApp.Handler(undefined);

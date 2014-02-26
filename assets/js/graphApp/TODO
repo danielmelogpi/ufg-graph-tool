@@ -20,3 +20,7 @@ GraphAPP.Graph
 
 GraphApp.Stage
 	this.addSelectionMark	// @TODO fork the layers
+
+GraphApp.SelectedMark
+	createMarkShape	//@TODO correct style properly
+	// rectangular forms appear to be in front of stuff

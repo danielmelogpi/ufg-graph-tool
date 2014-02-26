@@ -1,11 +1,12 @@
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global Kinetic, GraphApp */
+/*global Kinetic, GraphApp, $ */
 /** Defines the stage where the <canvas> element is constructed */
 
 
 GraphApp.Stage = function (canvasHandler) {
 	"use strict";
 	this.Iam = "GraphApp.Stage";
+	this.canvasHandler = canvasHandler;
 	this.kineticStage = new Kinetic.Stage({
 		container: canvasHandler,
 		width: window.screen.availWidth,
@@ -13,6 +14,7 @@ GraphApp.Stage = function (canvasHandler) {
 		draggable: false
 	});
 	this.layers = [];
+	this.selectionMarks = [];
 
 	/** Adds a layer to the Kinetics Stage */
 	this.addLayer = function (layer) {
@@ -26,7 +28,17 @@ GraphApp.Stage = function (canvasHandler) {
 	};
 
 	// @TODO fork the layers
-	this.addSelectionMark = function () {
-
+	this.addSelectionMark = function (shape) {
+		this.app.addShape(shape);
+		this.selectionMarks.push(shape.holder);
 	};
+
+	this.addEventsToCanvas = function () {
+		$("#canvasHandler").children().on("click.unselectEverything", function () {
+			this.selectionMarks.forEach(function (mark) {
+				mark.shape.hide();
+			});
+		});
+	};
+	
 };
