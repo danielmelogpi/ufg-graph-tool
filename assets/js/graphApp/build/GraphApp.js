@@ -1,4 +1,4 @@
-/*! GraphApp 25-02-2014 */
+/*! GraphApp 26-02-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -26,7 +26,7 @@ var GraphApp = function (canvasHandler) {
 	this.graph.stage = this.stage;
 
 	this.stage.app = this;
-	this.stage.addEventsToCanvas();
+	
 
 	this.canvasHandler = document.getElementById(canvasHandler);
 	
@@ -606,11 +606,10 @@ GraphApp.Stage = function (canvasHandler) {
 		this.selectionMarks.push(shape.holder);
 	};
 
-	this.addEventsToCanvas = function () {
-		$("#canvasHandler").children().on("click.unselectEverything", function () {
-			this.selectionMarks.forEach(function (mark) {
-				mark.shape.hide();
-			});
+	this.addEventsToCanvas = function (event) {
+		$(this.kineticStage.content).children().on("click.unselectEverything", function () {
+			var handler = new GraphApp.Handler.StageClick(event, this); //this ?
+			handler.run();
 		});
 	};
 	
@@ -998,6 +997,9 @@ GraphApp.Handler.DragEdge = function (event, target) {
 
 	/** Sets a function that executes the animation */
 	this.run = function () {
+		if (!this.hasCtrl()) {
+			return;
+		}
 		console.log("running");
 		var curveMousePosition = this.curveToMousePosition;
 		var thisHandler = this;
@@ -1103,7 +1105,28 @@ GraphApp.Handler.Selection = function (event, target) {
 
 };
 GraphApp.Handler.Selection.prototype = new GraphApp.Handler();
- /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp */
+
+/**
+* Deals with selecting and unselecting elements
+* @param <Object> event    the click Event
+* @param <GraphApp.Stage> the stage
+* @return void
+*/
+GraphApp.Handler.StageClick = function (event, target) {
+	"use strict";
+	this.Iam = "GraphApp.Handler.StageClick";
+	this.event = event;
+	this.target = target;
+	this.details = {};
+
+	this.run = function () {
+		console.log(this);
+	};
+
+};
+GraphApp.Handler.StageClick.prototype = new GraphApp.Handler(undefined, undefined); /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp */
 
 /** Behaviors related to the mouse (cursor), como posicionamento e estado */

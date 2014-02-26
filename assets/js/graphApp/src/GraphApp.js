@@ -25,7 +25,7 @@ var GraphApp = function (canvasHandler) {
 	this.graph.stage = this.stage;
 
 	this.stage.app = this;
-	this.stage.addEventsToCanvas();
+	
 
 	this.canvasHandler = document.getElementById(canvasHandler);
 	

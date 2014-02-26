@@ -10,6 +10,7 @@ GraphApp.Node
 			
 GraphApp.Control.NodeDraw
 	this.createNode /** @TODO 	Corrigir problemas quando o scale não é 1 */
+	// atualizar coordenadas de outros selecionados quando arrastar
 
 GraphApp.FollowLine
 	this.updateToMouse /** @TODO the diference in position relatively to the mouse needs improvement */

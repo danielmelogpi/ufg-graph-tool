@@ -33,11 +33,10 @@ GraphApp.Stage = function (canvasHandler) {
 		this.selectionMarks.push(shape.holder);
 	};
 
-	this.addEventsToCanvas = function () {
-		$("#canvasHandler").children().on("click.unselectEverything", function () {
-			this.selectionMarks.forEach(function (mark) {
-				mark.shape.hide();
-			});
+	this.addEventsToCanvas = function (event) {
+		$(this.kineticStage.content).children().on("click.unselectEverything", function () {
+			var handler = new GraphApp.Handler.StageClick(event, this); //this ?
+			handler.run();
 		});
 	};
 	

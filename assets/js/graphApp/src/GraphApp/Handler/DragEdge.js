@@ -60,6 +60,9 @@ GraphApp.Handler.DragEdge = function (event, target) {
 
 	/** Sets a function that executes the animation */
 	this.run = function () {
+		if (!this.hasCtrl()) {
+			return;
+		}
 		console.log("running");
 		var curveMousePosition = this.curveToMousePosition;
 		var thisHandler = this;
