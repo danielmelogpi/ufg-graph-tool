@@ -11,7 +11,8 @@
 		<!-- http://grafolegal.zz.mu/ -->
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
-		
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
 		<?
 		echo link_tag("assets/css/main.css"). "\n";
 		echo link_tag("assets/css/bootstrap.css"). "\n";
@@ -112,73 +113,99 @@
 		</div>
 	</div>
 	
-	<!--Local para a tela de desenho. O kinetic coloca a canvas aqui dentro-->
-	<div id="graph-app"></div>
-		
-
-	<div id="draw-panel" class="well well-sm">
-		<div class="panel-title">
-			<!-- <div class="panel-icon"></div> -->
-				<?=lang("drawn_title")?>
-			</div>
-		<div class="panel-content">
-			<button type="button" class="btn btn-default" id="navigationControl"><?=lang("drawn_selection")?></button>
-			<button type="button" class="btn btn-default" id="nodeControl"><?=lang("drawn_node")?></button>
-			<button type="button" class="btn btn-default" id="edgeControl"><?=lang("drawn_edge")?></button>
-			<button type="button" class="btn btn-default" id="removeControl"><?=lang("drawn_delete")?></button>
-			<button type="button" class="btn btn-default zoom" id="zoom-plus" data-scale="0.5"><?=lang("drawn_zoom_plus")?></button>
-			<button type="button" class="btn btn-default zoom" id="zoom-minus" data-scale="0.5"><?=lang("drawn_zoom_minus")?></button>
-			
-
+	
+	<div class="row">
+		<div class="col-md-9">
+			<div id="graph-app"><!--Local para a tela de desenho.--></div>	
 		</div>
+		<div class="col-md-3">
+			<div id="draw-panel" class="panel panel-default">
+				<div class="panel-heading">
+					<!-- <div class="panel-icon"></div> -->
+						<h5><?=lang("drawn_title")?></h5>
+				</div>
+				<div class="panel-body">
+					<div class="btn-group">
+						<button type="button" 
+							title="<?=lang("drawn_selection")?>"
+							class="btn btn-sm btn-default btn-info" id="navigationControl">
+							<i class="fa fa-hand-o-up"></i>
+						</button><button type="button" 
+							title="<?=lang("drawn_node")?>"
+							class="btn btn-sm btn-default" id="nodeControl">
+							<i class="fa fa-circle"></i>
+						</button><button type="button" 
+							title="<?=lang("drawn_edge")?>"
+							class="btn btn-sm btn-default" id="edgeControl">
+							<i class="fa fa-minus"></i>
+						</button>
+					</div>
+					<div class="btn-group">
+						<button type="button" 
+							title="<?=lang("drawn_delete")?>"
+							class="btn btn-sm btn-default" id="removeControl">
+							<i class="fa fa-times-circle-o"></i>
+						</button><button type="button" 
+							title="<?=lang("drawn_zoom_plus")?>"
+							class="btn btn-sm btn-default zoom" id="zoom-plus" data-scale="0.5">
+							<i class="fa fa-search-plus"></i>
+						</button><button type="button" 
+							title="<?=lang("drawn_zoom_minus")?>"
+							class="btn btn-sm btn-default zoom" id="zoom-minus" data-scale="0.5">
+							<i class="fa fa-search-minus"></i>
+						</button>
+					</div>
+				</div>
+			</div><!-- FIM DO DRAW PANEL -->
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<ul class="nav nav-pills nav-justified">
+						<li id="toogle-console" data-show="panel-console" class="active">
+							<a href="#"><i class="fa fa-comment-o"></i></a>
+						</li>
+						<li id="toogle-attributes" data-show="panel-attributes">
+							<a href="#"><i class="fa fa-gears"></i></a>
+						</li>
+					</ul>	
+				</div>
+				<div class="panel-body">
+					<div id="panel-attributes" style="display: none">
+						<ul class="list-group">
+						    <li class="list-group-item">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Cor</span>
+									<input type="text" class="form-control" placeholder="Username">
+								</div>
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Valor de tal coisa</span>
+									<input type="range" class="form-control" name="points" min="1" max="10" step="2">
+								</div>
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon ">Valor de tal coisa</span>
+									<select name="" id="" class="form-control">
+										<option value="">aas dsds d</option>
+										<option value=""> dasd asd</option>
+										<option value=""> asd asd</option>
+										<option value=""> dsad a</option>
+									</select>
+								</div>
+						    </li>
+						</ul>
+					</div>
+					<div id="panel-console" style="display: auto">
+						<ul class="list-group">
+						    <li class="list-group-item">Cras justo odio</li>
+							<li class="list-group-item">Dapibus ac facilisis in</li>
+							<li class="list-group-item">Morbi leo risus</li>
+							<li class="list-group-item">Porta ac consectetur ac</li>
+							<li class="list-group-item">Vestibulum at eros</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div><!-- FIM DA COLUNA LATERAL -->
 	</div>
 	
-	<div class="bottom-bar">
-		<!-- Console -->
-		<div id="console-panel" class="well well-sm bottom-bar-subpanel">
-			<div class="panel-title">
-				<div class="panel-icon">##</div>
-				Console
-			</div>
-			<div class="panel-content">
-				<div class="row">
-					<div class="col-md-1">i</div>
-					<div class="col-md-11">this is the last message from the programmer</div>
-				</div>
-				<div class="row">
-					<div class="col-md-1">i</div>
-					<div class="col-md-11">this is a message from the programmer</div>
-				</div>
-				<div class="row">
-					<div class="col-md-1">i</div>
-					<div class="col-md-11">this is a message from the programmer</div>
-				</div>
-				<div class="row">
-					<div class="col-md-1">i</div>
-					<div class="col-md-11">this is a message from the programmer</div>
-				</div>
-				<div class="row">
-					<div class="col-md-1">i</div>
-					<div class="col-md-11">this is a message from the programmer</div>
-				</div>
-				<div class="row">
-					<div class="col-md-1">i</div>
-					<div class="col-md-11">this is the first a message from the programmer</div>
-				</div>
-			</div>
-		</div>
-		<!-- FIM Console -->
-		<!-- Atributos -->
-		<div id="attr-panel" class="well well-sm bottom-bar-subpanel"> 
-			<div class="panel-title">
-				<div class="panel-icon">##</div>
-				Painel de atributos
-			</div>
-			<div class="panel-content">
-			</div>
-		</div>
-		<!-- Fim Atributos -->
-	</div>
 	<?
 	echo script_tag("assets/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"). "\n";
 	echo script_tag("assets/js/jquery.min.js");

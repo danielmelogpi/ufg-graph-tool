@@ -18,6 +18,7 @@ $(document).ready(
 		window.ed = graphApp.graph.createEdge(window.n1, window.n7);
 
 		eventsToControlButtons();
+		actionsToTabs();
 	}
 );
 
@@ -26,14 +27,43 @@ function eventsToControlButtons() {
 	"use strict";
 	$("#navigationControl").click(function () {
 		graphApp.changeControlTo(new GraphApp.Control.Navigation());
+		var button = $(this);
+		deactiveVisualControls();
+		button.addClass("btn-info");
 	});
 
 	$("#nodeControl").click(function () {
 		graphApp.changeControlTo(new GraphApp.Control.NodeDraw());
+		var button = $(this);
+		deactiveVisualControls();
+		button.addClass("btn-info");
 	});
 
 	$("#edgeControl").click(function () {
 		graphApp.changeControlTo(new GraphApp.Control.EdgeDraw());
+		var button = $(this);
+		deactiveVisualControls();
+		button.addClass("btn-info");
 	});
+}
 
+function deactiveVisualControls() {
+	"use strict";
+	$("#draw-panel .panel-body button").each(function () {
+		$(this).removeClass("btn-info");
+	});
+}
+
+function actionsToTabs() {
+	"use strict";
+	$("#toogle-console, #toogle-attributes").click(function () {
+		var me = $(this);
+		me.siblings().each(function () {
+			var sib = $(this);
+			$("#" + sib.data("show")).hide();
+			sib.removeClass("active");
+		});
+		me.addClass("active");
+		$("#" + me.data("show")).show();
+	});
 }
