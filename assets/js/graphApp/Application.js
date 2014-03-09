@@ -19,6 +19,9 @@ $(document).ready(
 
 		eventsToControlButtons();
 		actionsToTabs();
+
+		window.panel = new GraphApp.FormPanel.EdgeStyle(graphApp.graph.edges, $("#panel-attributes .list-group-item"));
+		window.panel.init();
 	}
 );
 

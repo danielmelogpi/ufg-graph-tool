@@ -172,23 +172,7 @@
 					<div id="panel-attributes" style="display: none">
 						<ul class="list-group">
 						    <li class="list-group-item">
-								<div class="input-group input-group-sm">
-									<span class="input-group-addon">Cor</span>
-									<input type="text" class="form-control" placeholder="Username">
-								</div>
-								<div class="input-group input-group-sm">
-									<span class="input-group-addon">Valor de tal coisa</span>
-									<input type="range" class="form-control" name="points" min="1" max="10" step="2">
-								</div>
-								<div class="input-group input-group-sm">
-									<span class="input-group-addon ">Valor de tal coisa</span>
-									<select name="" id="" class="form-control">
-										<option value="">aas dsds d</option>
-										<option value=""> dasd asd</option>
-										<option value=""> asd asd</option>
-										<option value=""> dsad a</option>
-									</select>
-								</div>
+								
 						    </li>
 						</ul>
 					</div>

@@ -25,6 +25,8 @@ GraphApp.Handler.Selection = function (event, target) {
 				this.unselectEverything();
 			}
 		}
+
+		this.target.graph.stage.draw(); //tudo terminado, desenhamos novamente
 	};
 
 	this.unselectEverything = function () {

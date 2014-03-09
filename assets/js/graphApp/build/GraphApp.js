@@ -1,4 +1,4 @@
-/*! GraphApp 26-02-2014 */
+/*! GraphApp 09-03-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -255,6 +255,82 @@ GraphApp.FollowLine = function (anchor) {
 		this.shape.remove();
 		this.graph.stage.draw();
 	};
+};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp, $ */
+
+/**
+* Deals with presenting a panel on the screen.
+* FormPanels are ways for the user to interact with the application
+* They have events binded to their elements that trigger an updateState function
+* that can execute some sort of modification in the application
+*/
+
+GraphApp.FormPanel = function (elements, formPanelContainer) {
+	"use strict";
+
+	this.elements = elements;
+	this.layoutDescriptor = undefined;
+	this.parentElement = formPanelContainer;
+	this.holderClass = "input-group input-group-sm";
+
+	this.init = function () {
+		//starts the panel things
+		this.createDescriptor();
+		this.drawPanel();
+		this.bindEvents();
+	};
+	
+	this.drawPanel = function () {
+		this.clearPanel();
+		//draws the description in the layout descriptor
+		var descriptor = this.layoutDescriptor;
+		
+
+		//for each item in the descriptor, creates a label and the form element
+		for (var k in descriptor) {
+			var holder = $("<div class='" + this.holderClass + "'>");
+			$(this.parentElement).append(holder);
+
+			var item = descriptor[k];
+			var legend = $("<span class='input-group-addon'>" + item.label + "</span>");
+			holder.append(legend);
+
+			var formElement = $("<" + descriptor[k].element + ">");
+
+			if (typeof item.attr !== "undefined") {
+				//gives to the form element its attributes and appends it
+				for (var i in item.attr) {
+					formElement.attr(i, item.attr[i]);
+				}
+			}
+			
+			if (typeof item.events !== "undefined") {
+				//binds the events
+				for (var j in item.events) {
+					formElement.on(j, item.events[j]);
+				}
+			}
+			formElement[0].panel = this;
+			
+			holder.append(formElement);
+		}
+
+	};
+
+	this.clearPanel = function () {
+		$(this.parentElement).html();
+	};
+
+	this.bindEvents = function () {
+		//binds the form with events, so that changin it cause updates in the page
+		throw "method not implemented";
+	};
+
+
+	this.executeAction = function () {
+		throw "method not implemented";
+	};
+
 };/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
@@ -1083,6 +1159,8 @@ GraphApp.Handler.Selection = function (event, target) {
 				this.unselectEverything();
 			}
 		}
+
+		this.target.graph.stage.draw(); //tudo terminado, desenhamos novamente
 	};
 
 	this.unselectEverything = function () {
@@ -1172,4 +1250,109 @@ GraphApp.Input.Mouse = function (stage) {
 		}
 	};
 };
-GraphApp.Input.Mouse.prototype = new GraphApp.Input();
+GraphApp.Input.Mouse.prototype = new GraphApp.Input();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp, $ */
+
+
+/**
+* Deals with presenting a panel on the screen that allows edge customization
+* FormPanels are ways for the user to interact with the application
+* They have events binded to their elements that trigger an updateState function
+* that can execute some sort of modification in the application
+*/
+
+GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer) {
+	"use strict";
+
+	this.elements = elements;
+	this.layoutDescriptor = undefined;
+	this.parentElement = formPanelContainer;
+
+
+	this.bindEvents = function () {
+		//binds the form with events, so that changin it cause updates in the page
+		var panel = this;
+		// this.parentElement.find("input").each(function() {
+		// 	var el = $(this);
+		// 	el.keypress
+		// });
+	};
+
+	this.executeAction = function () {
+		throw "method not implemented";
+	};
+
+	this.createDescriptor = function () {
+
+		var panel = this;
+
+		this.layoutDescriptor = [
+			{
+				label: "Cor",
+				element: "input",
+				attr: {
+					type: "text",
+					"class": "form-control",
+					placeholder: "Username"
+				}
+
+			},//end of item
+			{
+				label: "Espessura",
+				element: "input",
+				attr: {
+					type: "range",
+					step: "0.2",
+					min: "1",
+					max: "10",
+					"class": "form-control",
+					placeholder: "Username"
+				},
+				events : {
+					blur: panel.updateStrokeWidth,
+					change: panel.updateStrokeWidth
+				}
+			}, //end of item
+		];// end of desc  array
+	};
+
+	/**
+	* Another comment
+	* @param 
+	* @return 
+	*/
+	this.updateStrokeWidth = function () {
+		var el = this;
+		el.panel.elements.forEach(function (edge) {
+			edge.shape.setStrokeWidth(el.value);
+		});
+		try {
+			el.panel.elements[0].graph.stage.draw();
+		}
+		catch (e) {
+			console.error(e);
+		}
+	};
+	
+	
+
+};
+
+GraphApp.FormPanel.EdgeStyle.prototype = new GraphApp.FormPanel(undefined, undefined);/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp */
+
+/**
+* Deals with selecting and unselecting elements
+* @param <Object> event    the dragging event
+* @param <GraphApp.Node> | <GraphApp.Edge>  target     who was clicked
+* @return void
+*/
+
+GraphApp.FormPanel.NodeStyle = function (elements) {
+	this.elements = undefined;
+
+
+
+};
+
+GraphApp.FormPanel.EdgeStyle.prototype = new GraphApp.FormPanel();

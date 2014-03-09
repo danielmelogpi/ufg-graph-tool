@@ -26,7 +26,8 @@ module.exports = function(grunt) {
               'src/GraphApp/Control/*.js',
               'src/GraphApp/Style/*.js',
               'src/GraphApp/Handler/*.js',
-              'src/GraphApp/Input/*.js'],
+              'src/GraphApp/Input/*.js',
+              'src/GraphApp/FormPanel/*.js',],
         // The destination file:
         // Notice the angle-bracketed ERB-like templating,
         // which allows you to reference other properties.
