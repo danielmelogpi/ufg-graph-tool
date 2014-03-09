@@ -1,7 +1,9 @@
 <b>[ENGLISH]</b>
 
-This is an online scratch tool for drawning graphs and executing algorithms on their data, offering a friendly enviroment to related students and teachers.
-This tool is beeing developed by Daniel Melo, a Information Systems student in Universidade Federal de Goiás (Goiás Federal University) in Brazil.
+This is an online tool for drawning graphs and executing algorithms on their data, offering a friendly enviroment to related students and teachers.
+This tool is beeing developed by Daniel Melo, a Information Systems student at the Universidade Federal de Goiás (Goiás Federal University - free translation) in Brazil.
+
+A draft of the project can be seen at 
 
 
 <b>[PORTUGUÊS]</b>
