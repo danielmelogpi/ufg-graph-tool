@@ -1293,7 +1293,11 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer) {
 				attr: {
 					type: "text",
 					"class": "form-control",
-					placeholder: "Username"
+					placeholder: "Cor do traço"
+				},
+				events : {
+					blur: panel.updateStroke,
+					keyup: panel.updateStroke
 				}
 
 			},//end of item
@@ -1316,11 +1320,7 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer) {
 		];// end of desc  array
 	};
 
-	/**
-	* Another comment
-	* @param 
-	* @return 
-	*/
+	
 	this.updateStrokeWidth = function () {
 		var el = this;
 		el.panel.elements.forEach(function (edge) {
@@ -1334,6 +1334,19 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer) {
 		}
 	};
 	
+
+	this.updateStroke = function () {
+		var el = this;
+		el.panel.elements.forEach(function (edge) {
+			edge.shape.setStroke(el.value);
+		});
+		try {
+			el.panel.elements[0].graph.stage.draw();
+		}
+		catch (e) {
+			console.error(e);
+		}
+	};
 	
 
 };
