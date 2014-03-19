@@ -20,7 +20,6 @@ GraphApp.FormPanel = function (elements, formPanelContainer) {
 		//starts the panel things
 		this.createDescriptor();
 		this.drawPanel();
-		this.bindEvents();
 	};
 	
 	this.drawPanel = function () {
@@ -65,14 +64,5 @@ GraphApp.FormPanel = function (elements, formPanelContainer) {
 		$(this.parentElement).html();
 	};
 
-	this.bindEvents = function () {
-		//binds the form with events, so that changin it cause updates in the page
-		throw "method not implemented";
-	};
-
-
-	this.executeAction = function () {
-		throw "method not implemented";
-	};
 
 };

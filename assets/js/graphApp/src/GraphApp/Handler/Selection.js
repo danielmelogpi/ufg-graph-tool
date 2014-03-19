@@ -32,11 +32,22 @@ GraphApp.Handler.Selection = function (event, target) {
 	};
 
 	this.showPanel = function () {
-		var selectedItems = this.target.graph.edges.filter(function (e) {
+		var list, PanelClass;
+		if (this.target instanceof GraphApp.Node) {
+			list = this.target.graph.nodes;
+			PanelClass = GraphApp.FormPanel.NodeStyle;
+		}
+		else {
+			list = this.target.graph.edges;
+			PanelClass = GraphApp.FormPanel.EdgeStyle;
+		}
+
+
+		var selectedItems = list.filter(function (e) {
 			return e.selectionMark.shape.isVisible();
 		});
 
-		var panel = new GraphApp.FormPanel.EdgeStyle(selectedItems, "#panel-attributes .list-group-item");
+		var panel = new PanelClass(selectedItems, "#panel-attributes .list-group-item");
 		panel.init();
 	};
 

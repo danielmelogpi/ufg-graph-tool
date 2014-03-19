@@ -17,15 +17,6 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer) {
 	this.parentElement = formPanelContainer;
 
 
-	this.bindEvents = function () {
-		//binds the form with events, so that changin it cause updates in the page
-		var panel = this;
-		// this.parentElement.find("input").each(function() {
-		// 	var el = $(this);
-		// 	el.keypress
-		// });
-	};
-
 	this.executeAction = function () {
 		throw "method not implemented";
 	};

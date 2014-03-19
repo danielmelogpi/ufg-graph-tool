@@ -1,4 +1,4 @@
-/*! GraphApp 18-03-2014 */
+/*! GraphApp 19-03-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -277,7 +277,6 @@ GraphApp.FormPanel = function (elements, formPanelContainer) {
 		//starts the panel things
 		this.createDescriptor();
 		this.drawPanel();
-		this.bindEvents();
 	};
 	
 	this.drawPanel = function () {
@@ -322,15 +321,6 @@ GraphApp.FormPanel = function (elements, formPanelContainer) {
 		$(this.parentElement).html();
 	};
 
-	this.bindEvents = function () {
-		//binds the form with events, so that changin it cause updates in the page
-		throw "method not implemented";
-	};
-
-
-	this.executeAction = function () {
-		throw "method not implemented";
-	};
 
 };/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
@@ -1167,11 +1157,22 @@ GraphApp.Handler.Selection = function (event, target) {
 	};
 
 	this.showPanel = function () {
-		var selectedItems = this.target.graph.edges.filter(function (e) {
+		var list, PanelClass;
+		if (this.target instanceof GraphApp.Node) {
+			list = this.target.graph.nodes;
+			PanelClass = GraphApp.FormPanel.NodeStyle;
+		}
+		else {
+			list = this.target.graph.edges;
+			PanelClass = GraphApp.FormPanel.EdgeStyle;
+		}
+
+
+		var selectedItems = list.filter(function (e) {
 			return e.selectionMark.shape.isVisible();
 		});
 
-		var panel = new GraphApp.FormPanel.EdgeStyle(selectedItems, "#panel-attributes .list-group-item");
+		var panel = new PanelClass(selectedItems, "#panel-attributes .list-group-item");
 		panel.init();
 	};
 
@@ -1281,15 +1282,6 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer) {
 	this.parentElement = formPanelContainer;
 
 
-	this.bindEvents = function () {
-		//binds the form with events, so that changin it cause updates in the page
-		var panel = this;
-		// this.parentElement.find("input").each(function() {
-		// 	var el = $(this);
-		// 	el.keypress
-		// });
-	};
-
 	this.executeAction = function () {
 		throw "method not implemented";
 	};
@@ -1373,11 +1365,99 @@ GraphApp.FormPanel.EdgeStyle.prototype = new GraphApp.FormPanel(undefined, undef
 * @return void
 */
 
-GraphApp.FormPanel.NodeStyle = function (elements) {
-	this.elements = undefined;
+GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
+	"use strict";
+
+	this.elements = elements;
+	this.layoutDescriptor = undefined;
+	this.parentElement = formPanelContainer;
+
+	this.createDescriptor = function () {
+
+		var panel = this;
+
+		this.layoutDescriptor = [
+			{
+				label: "Cor de borda",
+				element: "input",
+				attr: {
+					type: "text",
+					"class": "form-control",
+					placeholder: "Cor do traço"
+				},
+				events : {
+					blur: panel.updateStroke,
+					keyup: panel.updateStroke
+				}
+
+			},//end of item
+			{
+				label: "Cor do preenchimento",
+				element: "input",
+				attr: {
+					type: "text",
+					"class": "form-control",
+					placeholder: "Cor do preenchimento"
+				},
+				events : {
+					blur: panel.updateFill,
+					keyup: panel.updateFill
+				}
+
+			},//end of item
+			{
+				label: "Raio",
+				element: "input",
+				attr: {
+					type: "range",
+					step: "0.2",
+					min: "10",
+					max: "40",
+					"class": "form-control",
+					placeholder: "Raio do vértice"
+				},
+				events : {
+					blur: panel.updateStrokeWidth,
+					change: panel.updateStrokeWidth
+				}
+			}, //end of item
+		];// end of desc  array
+	};
+
+	this.updateStrokeWidth = function () {
+		var el = this;
+		el.panel.elements.forEach(function (edge) {
+			edge.shape.setStrokeWidth(el.value);
+		});
+		try {
+			el.panel.elements[0].graph.stage.draw();
+		}
+		catch (e) {
+			console.error(e);
+		}
+	};
+	
+
+	this.updateStroke = function () {
+		var el = this;
+		el.panel.elements.forEach(function (edge) {
+			edge.shape.setStroke(el.value);
+		});
+		try {
+			el.panel.elements[0].graph.stage.draw();
+		}
+		catch (e) {
+			console.error(e);
+		}
+	};
+
+	this.updateFill = function () {
+		// body...
+	};
+
 
 
 
 };
 
-GraphApp.FormPanel.EdgeStyle.prototype = new GraphApp.FormPanel();
+GraphApp.FormPanel.NodeStyle.prototype = new GraphApp.FormPanel();
