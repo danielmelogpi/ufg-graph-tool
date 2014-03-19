@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://danielmelo.tk/ufg/graph-tool';//'http://grafo-ufg.local/';
+$config['base_url']	= 'http://grafo-ufg.local';//'http://grafo-ufg.local/';
 
 /*
 |--------------------------------------------------------------------------

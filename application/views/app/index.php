@@ -11,7 +11,7 @@
 		<!-- http://grafolegal.zz.mu/ -->
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
-		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+		<!--link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"-->
 
 		<?
 		echo link_tag("assets/css/main.css"). "\n";

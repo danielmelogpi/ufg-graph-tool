@@ -1,4 +1,4 @@
-/*! GraphApp 09-03-2014 */
+/*! GraphApp 18-03-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -284,12 +284,13 @@ GraphApp.FormPanel = function (elements, formPanelContainer) {
 		this.clearPanel();
 		//draws the description in the layout descriptor
 		var descriptor = this.layoutDescriptor;
-		
+		var parentElement = $(this.parentElement);
+		parentElement.html("");
 
 		//for each item in the descriptor, creates a label and the form element
 		for (var k in descriptor) {
 			var holder = $("<div class='" + this.holderClass + "'>");
-			$(this.parentElement).append(holder);
+			parentElement.append(holder);
 
 			var item = descriptor[k];
 			var legend = $("<span class='input-group-addon'>" + item.label + "</span>");
@@ -1150,10 +1151,12 @@ GraphApp.Handler.Selection = function (event, target) {
 	this.run = function () {
 		if (this.hasShift()) {
 			this.target.selectionMark.toogle();
+			this.showPanel();
 		}
 		else {
 			if (this.event.targetNode.holder.id === this.target.id) {
 				this.unselectEverythingButMe();
+				this.showPanel();
 			}
 			else {
 				this.unselectEverything();
@@ -1161,6 +1164,15 @@ GraphApp.Handler.Selection = function (event, target) {
 		}
 
 		this.target.graph.stage.draw(); //tudo terminado, desenhamos novamente
+	};
+
+	this.showPanel = function () {
+		var selectedItems = this.target.graph.edges.filter(function (e) {
+			return e.selectionMark.shape.isVisible();
+		});
+
+		var panel = new GraphApp.FormPanel.EdgeStyle(selectedItems, "#panel-attributes .list-group-item");
+		panel.init();
 	};
 
 	this.unselectEverything = function () {

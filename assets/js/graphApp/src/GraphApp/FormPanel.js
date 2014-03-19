@@ -27,12 +27,13 @@ GraphApp.FormPanel = function (elements, formPanelContainer) {
 		this.clearPanel();
 		//draws the description in the layout descriptor
 		var descriptor = this.layoutDescriptor;
-		
+		var parentElement = $(this.parentElement);
+		parentElement.html("");
 
 		//for each item in the descriptor, creates a label and the form element
 		for (var k in descriptor) {
 			var holder = $("<div class='" + this.holderClass + "'>");
-			$(this.parentElement).append(holder);
+			parentElement.append(holder);
 
 			var item = descriptor[k];
 			var legend = $("<span class='input-group-addon'>" + item.label + "</span>");

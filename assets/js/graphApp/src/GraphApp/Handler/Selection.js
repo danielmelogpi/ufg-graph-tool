@@ -16,10 +16,12 @@ GraphApp.Handler.Selection = function (event, target) {
 	this.run = function () {
 		if (this.hasShift()) {
 			this.target.selectionMark.toogle();
+			this.showPanel();
 		}
 		else {
 			if (this.event.targetNode.holder.id === this.target.id) {
 				this.unselectEverythingButMe();
+				this.showPanel();
 			}
 			else {
 				this.unselectEverything();
@@ -27,6 +29,15 @@ GraphApp.Handler.Selection = function (event, target) {
 		}
 
 		this.target.graph.stage.draw(); //tudo terminado, desenhamos novamente
+	};
+
+	this.showPanel = function () {
+		var selectedItems = this.target.graph.edges.filter(function (e) {
+			return e.selectionMark.shape.isVisible();
+		});
+
+		var panel = new GraphApp.FormPanel.EdgeStyle(selectedItems, "#panel-attributes .list-group-item");
+		panel.init();
 	};
 
 	this.unselectEverything = function () {
