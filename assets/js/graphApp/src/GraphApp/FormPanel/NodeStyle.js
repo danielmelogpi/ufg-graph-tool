@@ -54,14 +54,14 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 				attr: {
 					type: "range",
 					step: "0.2",
-					min: "10",
+					min: "4",
 					max: "40",
 					"class": "form-control",
 					placeholder: "Raio do vértice"
 				},
 				events : {
-					blur: panel.updateStrokeWidth,
-					change: panel.updateStrokeWidth
+					blur: panel.updateRadius,
+					change: panel.updateRadius
 				}
 			}, //end of item
 		];// end of desc  array
@@ -83,8 +83,8 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 
 	this.updateStroke = function () {
 		var el = this;
-		el.panel.elements.forEach(function (edge) {
-			edge.shape.setStroke(el.value);
+		el.panel.elements.forEach(function (element) {
+			element.shape.setStroke(el.value);
 		});
 		try {
 			el.panel.elements[0].graph.stage.draw();
@@ -95,9 +95,32 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 	};
 
 	this.updateFill = function () {
-		// body...
+		var el = this;
+		el.panel.elements.forEach(function (element) {
+			element.shape.setFill(el.value);
+		});
+		try {
+			el.panel.elements[0].graph.stage.draw();
+		}
+		catch (e) {
+			console.error(e);
+		}
 	};
 
+
+	this.updateRadius = function () {
+		var el = this;
+		el.panel.elements.forEach(function (element) {
+			element.shape.setRadius(el.value);
+			element.selectionMark.updateMarkConfig();
+		});
+		try {
+			el.panel.elements[0].graph.stage.draw();
+		}
+		catch (e) {
+			console.error(e);
+		}
+	};
 
 
 

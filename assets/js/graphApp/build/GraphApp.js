@@ -1,4 +1,4 @@
-/*! GraphApp 19-03-2014 */
+/*! GraphApp 21-03-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -21,18 +21,27 @@ var GraphApp = function (canvasHandler) {
 	this.selectionLayer = new GraphApp.Layer();
 	this.activeControl = new GraphApp.Control.Navigation();
 
+	/*flags to deal with event-data-bubling problems (like clicking in the canvas
+	*	and not beeing able to stopPropagation in still in the node/edge ).
+	* shame on me
+	*/
+	this.events = {
+		"featureClicked" : false
+	};
+
 	
 	this.graph.app = this;
 	this.graph.stage = this.stage;
 
 	this.stage.app = this;
-	
+		
 
 	this.canvasHandler = document.getElementById(canvasHandler);
 	
 	/** is it possible to use 3 layers to preserve z-index without loosing click
 	propagation ?  */
 	this.stage.addLayer(this.layer);
+	this.stage.addEventsToCanvas();
 	//this.stage.addLayer(this.edgeLayer);
 	//this.stage.addLayer(this.nodeLayer);
 	//this.stage.addLayer(this.selectionLayer);
@@ -673,12 +682,16 @@ GraphApp.Stage = function (canvasHandler) {
 		this.selectionMarks.push(shape.holder);
 	};
 
-	this.addEventsToCanvas = function (event) {
-		$(this.kineticStage.content).children().on("click.unselectEverything", function () {
+	this.addEventsToCanvas = function () {
+		var app = this.app;
+		$(this.kineticStage.content).children().on("click.unselectEverything", function (event) {
 			var handler = new GraphApp.Handler.StageClick(event, this); //this ?
+			handler.setApp(app);
 			handler.run();
 		});
 	};
+
+
 	
 };"use strict";
 
@@ -1139,6 +1152,7 @@ GraphApp.Handler.Selection = function (event, target) {
 	this.details = {};
 
 	this.run = function () {
+		console.log("selecting");
 		if (this.hasShift()) {
 			this.target.selectionMark.toogle();
 			this.showPanel();
@@ -1152,8 +1166,9 @@ GraphApp.Handler.Selection = function (event, target) {
 				this.unselectEverything();
 			}
 		}
-
+		
 		this.target.graph.stage.draw(); //tudo terminado, desenhamos novamente
+		this.target.graph.app.events.featureClicked = true;
 	};
 
 	this.showPanel = function () {
@@ -1200,7 +1215,7 @@ GraphApp.Handler.Selection.prototype = new GraphApp.Handler();
 /*global  GraphApp */
 
 /**
-* Deals with selecting and unselecting elements
+* Deals with clicks given in the stage. Do this work if I split the canvas?
 * @param <Object> event    the click Event
 * @param <GraphApp.Stage> the stage
 * @return void
@@ -1211,12 +1226,36 @@ GraphApp.Handler.StageClick = function (event, target) {
 	this.event = event;
 	this.target = target;
 	this.details = {};
+	this.app = undefined;
 
 	this.run = function () {
 		console.log(this);
+		this.unselectEverything();
+	};
+
+	this.setApp = function (app) {
+		this.app = app;
+	};
+
+	// unselects all the features if you click an empty area
+	this.unselectEverything = function () {
+		if (!this.app.events.featureClicked) {
+			this.app.graph.edges.forEach(function (el) { //unselects edges
+				el.selectionMark.shape.setVisible(false);
+			});
+
+			this.app.graph.nodes.forEach(function (el) { //unselects nodes
+				el.selectionMark.shape.setVisible(false);
+			});
+
+			this.app.stage.draw();	//draw things	
+		}
+		this.app.events.featureClicked = false;
 	};
 
 };
+
+
 GraphApp.Handler.StageClick.prototype = new GraphApp.Handler(undefined, undefined); /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp */
 
@@ -1411,14 +1450,14 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 				attr: {
 					type: "range",
 					step: "0.2",
-					min: "10",
+					min: "4",
 					max: "40",
 					"class": "form-control",
 					placeholder: "Raio do vértice"
 				},
 				events : {
-					blur: panel.updateStrokeWidth,
-					change: panel.updateStrokeWidth
+					blur: panel.updateRadius,
+					change: panel.updateRadius
 				}
 			}, //end of item
 		];// end of desc  array
@@ -1440,8 +1479,8 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 
 	this.updateStroke = function () {
 		var el = this;
-		el.panel.elements.forEach(function (edge) {
-			edge.shape.setStroke(el.value);
+		el.panel.elements.forEach(function (element) {
+			element.shape.setStroke(el.value);
 		});
 		try {
 			el.panel.elements[0].graph.stage.draw();
@@ -1452,9 +1491,32 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 	};
 
 	this.updateFill = function () {
-		// body...
+		var el = this;
+		el.panel.elements.forEach(function (element) {
+			element.shape.setFill(el.value);
+		});
+		try {
+			el.panel.elements[0].graph.stage.draw();
+		}
+		catch (e) {
+			console.error(e);
+		}
 	};
 
+
+	this.updateRadius = function () {
+		var el = this;
+		el.panel.elements.forEach(function (element) {
+			element.shape.setRadius(el.value);
+			element.selectionMark.updateMarkConfig();
+		});
+		try {
+			el.panel.elements[0].graph.stage.draw();
+		}
+		catch (e) {
+			console.error(e);
+		}
+	};
 
 
 

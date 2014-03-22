@@ -14,6 +14,7 @@ GraphApp.Handler.Selection = function (event, target) {
 	this.details = {};
 
 	this.run = function () {
+		console.log("selecting");
 		if (this.hasShift()) {
 			this.target.selectionMark.toogle();
 			this.showPanel();
@@ -27,8 +28,9 @@ GraphApp.Handler.Selection = function (event, target) {
 				this.unselectEverything();
 			}
 		}
-
+		
 		this.target.graph.stage.draw(); //tudo terminado, desenhamos novamente
+		this.target.graph.app.events.featureClicked = true;
 	};
 
 	this.showPanel = function () {

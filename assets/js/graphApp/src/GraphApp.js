@@ -20,18 +20,27 @@ var GraphApp = function (canvasHandler) {
 	this.selectionLayer = new GraphApp.Layer();
 	this.activeControl = new GraphApp.Control.Navigation();
 
+	/*flags to deal with event-data-bubling problems (like clicking in the canvas
+	*	and not beeing able to stopPropagation in still in the node/edge ).
+	* shame on me
+	*/
+	this.events = {
+		"featureClicked" : false
+	};
+
 	
 	this.graph.app = this;
 	this.graph.stage = this.stage;
 
 	this.stage.app = this;
-	
+		
 
 	this.canvasHandler = document.getElementById(canvasHandler);
 	
 	/** is it possible to use 3 layers to preserve z-index without loosing click
 	propagation ?  */
 	this.stage.addLayer(this.layer);
+	this.stage.addEventsToCanvas();
 	//this.stage.addLayer(this.edgeLayer);
 	//this.stage.addLayer(this.nodeLayer);
 	//this.stage.addLayer(this.selectionLayer);
