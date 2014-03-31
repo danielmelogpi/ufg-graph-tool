@@ -11,7 +11,7 @@
 		<!-- http://grafolegal.zz.mu/ -->
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
-		<!--link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"-->
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
 		<?
 		echo link_tag("assets/css/main.css"). "\n";
@@ -163,7 +163,7 @@
 						<li id="toogle-console" data-show="panel-console" class="active">
 							<a href="#"><i class="fa fa-comment-o"></i></a>
 						</li>
-						<li id="toogle-attributes" data-show="panel-attributes">
+						<li id="toogle-attributes" data-show="panel-attributes" class="invisible">
 							<a href="#"><i class="fa fa-gears"></i></a>
 						</li>
 					</ul>	

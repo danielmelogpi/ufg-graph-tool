@@ -16,8 +16,10 @@ GraphApp.Handler.StageClick = function (event, target) {
 	this.app = undefined;
 
 	this.run = function () {
-		console.log(this);
-		this.unselectEverything();
+		if (!this.app.events.featureClicked) {
+			this.unselectEverything();
+		}
+		this.app.events.featureClicked = false;
 	};
 
 	this.setApp = function (app) {
@@ -26,20 +28,22 @@ GraphApp.Handler.StageClick = function (event, target) {
 
 	// unselects all the features if you click an empty area
 	this.unselectEverything = function () {
-		if (!this.app.events.featureClicked) {
-			this.app.graph.edges.forEach(function (el) { //unselects edges
-				el.selectionMark.shape.setVisible(false);
-			});
+		
+		this.app.graph.edges.forEach(function (el) { //unselects edges
+			el.selectionMark.shape.setVisible(false);
+		});
 
-			this.app.graph.nodes.forEach(function (el) { //unselects nodes
-				el.selectionMark.shape.setVisible(false);
-			});
+		this.app.graph.nodes.forEach(function (el) { //unselects nodes
+			el.selectionMark.shape.setVisible(false);
+		});
 
-			this.app.stage.draw();	//draw things	
+		this.app.stage.draw();	//draw things
+
+		if (this.app.panels.stylePanel) {
+			this.app.panels.stylePanel.destroy();
 		}
-		this.app.events.featureClicked = false;
+		
 	};
-
 };
 
 

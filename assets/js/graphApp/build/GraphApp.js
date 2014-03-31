@@ -1,4 +1,4 @@
-/*! GraphApp 21-03-2014 */
+/*! GraphApp 30-03-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -20,6 +20,7 @@ var GraphApp = function (canvasHandler) {
 	this.edgeLayer = new GraphApp.Layer();
 	this.selectionLayer = new GraphApp.Layer();
 	this.activeControl = new GraphApp.Control.Navigation();
+	this.panels = {};
 
 	/*flags to deal with event-data-bubling problems (like clicking in the canvas
 	*	and not beeing able to stopPropagation in still in the node/edge ).
@@ -274,18 +275,22 @@ GraphApp.FollowLine = function (anchor) {
 * that can execute some sort of modification in the application
 */
 
-GraphApp.FormPanel = function (elements, formPanelContainer) {
+GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 	"use strict";
 
 	this.elements = elements;
 	this.layoutDescriptor = undefined;
 	this.parentElement = formPanelContainer;
 	this.holderClass = "input-group input-group-sm";
+	this.toogleButton = toogleButton;
+	this.app = undefined;
 
 	this.init = function () {
 		//starts the panel things
+		this.app = this.elements[0].graph.app;
 		this.createDescriptor();
 		this.drawPanel();
+		
 	};
 	
 	this.drawPanel = function () {
@@ -320,14 +325,26 @@ GraphApp.FormPanel = function (elements, formPanelContainer) {
 				}
 			}
 			formElement[0].panel = this;
-			
 			holder.append(formElement);
+
 		}
+
+		this.app.panels.stylePanel = this;
+		$(this.toogleButton).removeClass("invisible");
+		$(this.toogleButton).click();
 
 	};
 
 	this.clearPanel = function () {
-		$(this.parentElement).html();
+		$(this.parentElement).html("");
+	};
+
+	this.destroy = function () {
+		delete this.app.panels.stylePanel;
+		$(this.toogleButton).addClass("invisible");
+		$(this.toogleButton).siblings()[0].click();
+		$(this.parentElement).html("");
+
 	};
 
 
@@ -1152,7 +1169,7 @@ GraphApp.Handler.Selection = function (event, target) {
 	this.details = {};
 
 	this.run = function () {
-		console.log("selecting");
+		
 		if (this.hasShift()) {
 			this.target.selectionMark.toogle();
 			this.showPanel();
@@ -1187,7 +1204,7 @@ GraphApp.Handler.Selection = function (event, target) {
 			return e.selectionMark.shape.isVisible();
 		});
 
-		var panel = new PanelClass(selectedItems, "#panel-attributes .list-group-item");
+		var panel = new PanelClass(selectedItems, "#panel-attributes .list-group-item", "#toogle-attributes");
 		panel.init();
 	};
 
@@ -1195,23 +1212,28 @@ GraphApp.Handler.Selection = function (event, target) {
 		this.target.graph.stage.selectionMarks.forEach(function (mark) {
 			mark.shape.hide();
 		});
+		this.target.graph.panels.stylePanel.destroy();
 	};
 
 	this.unselectEverythingButMe = function () {
+		var remainingElement;
 		this.target.graph.stage.selectionMarks.forEach(function (mark) {
 			if (mark.anchor.id !== this.target.id) {
 				mark.shape.hide();
+				remainingElement = mark.shape.holder;
 			}
 			else {
 				mark.shape.show();
 			}
 		}, this);
+
+
 	};
 
 
 };
-GraphApp.Handler.Selection.prototype = new GraphApp.Handler();
-/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+
+GraphApp.Handler.Selection.prototype = new GraphApp.Handler();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
 /**
@@ -1229,8 +1251,10 @@ GraphApp.Handler.StageClick = function (event, target) {
 	this.app = undefined;
 
 	this.run = function () {
-		console.log(this);
-		this.unselectEverything();
+		if (!this.app.events.featureClicked) {
+			this.unselectEverything();
+		}
+		this.app.events.featureClicked = false;
 	};
 
 	this.setApp = function (app) {
@@ -1239,24 +1263,27 @@ GraphApp.Handler.StageClick = function (event, target) {
 
 	// unselects all the features if you click an empty area
 	this.unselectEverything = function () {
-		if (!this.app.events.featureClicked) {
-			this.app.graph.edges.forEach(function (el) { //unselects edges
-				el.selectionMark.shape.setVisible(false);
-			});
+		
+		this.app.graph.edges.forEach(function (el) { //unselects edges
+			el.selectionMark.shape.setVisible(false);
+		});
 
-			this.app.graph.nodes.forEach(function (el) { //unselects nodes
-				el.selectionMark.shape.setVisible(false);
-			});
+		this.app.graph.nodes.forEach(function (el) { //unselects nodes
+			el.selectionMark.shape.setVisible(false);
+		});
 
-			this.app.stage.draw();	//draw things	
+		this.app.stage.draw();	//draw things
+
+		if (this.app.panels.stylePanel) {
+			this.app.panels.stylePanel.destroy();
 		}
-		this.app.events.featureClicked = false;
+		
 	};
-
 };
 
 
-GraphApp.Handler.StageClick.prototype = new GraphApp.Handler(undefined, undefined); /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Handler.StageClick.prototype = new GraphApp.Handler(undefined, undefined);
+ /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp */
 
 /** Behaviors related to the mouse (cursor), como posicionamento e estado */
@@ -1303,7 +1330,7 @@ GraphApp.Input.Mouse = function (stage) {
 	};
 };
 GraphApp.Input.Mouse.prototype = new GraphApp.Input();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global  GraphApp, $ */
+/*global  GraphApp */
 
 
 /**
@@ -1313,12 +1340,13 @@ GraphApp.Input.Mouse.prototype = new GraphApp.Input();/*jslint browser: true, de
 * that can execute some sort of modification in the application
 */
 
-GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer) {
+GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer, toogleButton) {
 	"use strict";
 
 	this.elements = elements;
 	this.layoutDescriptor = undefined;
 	this.parentElement = formPanelContainer;
+	this.toogleButton = toogleButton;
 
 
 	this.executeAction = function () {
@@ -1404,12 +1432,13 @@ GraphApp.FormPanel.EdgeStyle.prototype = new GraphApp.FormPanel(undefined, undef
 * @return void
 */
 
-GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
+GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer, toogleButton) {
 	"use strict";
 
 	this.elements = elements;
 	this.layoutDescriptor = undefined;
 	this.parentElement = formPanelContainer;
+	this.toogleButton = toogleButton;
 
 	this.createDescriptor = function () {
 
@@ -1422,7 +1451,8 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 				attr: {
 					type: "text",
 					"class": "form-control",
-					placeholder: "Cor do traço"
+					placeholder: "Cor do traço",
+					value: this.elements[0].shape.getStroke()
 				},
 				events : {
 					blur: panel.updateStroke,
@@ -1436,7 +1466,8 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 				attr: {
 					type: "text",
 					"class": "form-control",
-					placeholder: "Cor do preenchimento"
+					placeholder: "Cor do preenchimento",
+					value: this.elements[0].shape.getFill()
 				},
 				events : {
 					blur: panel.updateFill,
@@ -1453,7 +1484,8 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 					min: "4",
 					max: "40",
 					"class": "form-control",
-					placeholder: "Raio do vértice"
+					placeholder: "Raio do vértice",
+					value: this.elements[0].shape.getRadius()
 				},
 				events : {
 					blur: panel.updateRadius,

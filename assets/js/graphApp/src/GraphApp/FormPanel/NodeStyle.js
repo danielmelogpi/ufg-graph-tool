@@ -8,12 +8,13 @@
 * @return void
 */
 
-GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
+GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer, toogleButton) {
 	"use strict";
 
 	this.elements = elements;
 	this.layoutDescriptor = undefined;
 	this.parentElement = formPanelContainer;
+	this.toogleButton = toogleButton;
 
 	this.createDescriptor = function () {
 
@@ -26,7 +27,8 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 				attr: {
 					type: "text",
 					"class": "form-control",
-					placeholder: "Cor do traço"
+					placeholder: "Cor do traço",
+					value: this.elements[0].shape.getStroke()
 				},
 				events : {
 					blur: panel.updateStroke,
@@ -40,7 +42,8 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 				attr: {
 					type: "text",
 					"class": "form-control",
-					placeholder: "Cor do preenchimento"
+					placeholder: "Cor do preenchimento",
+					value: this.elements[0].shape.getFill()
 				},
 				events : {
 					blur: panel.updateFill,
@@ -57,7 +60,8 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer) {
 					min: "4",
 					max: "40",
 					"class": "form-control",
-					placeholder: "Raio do vértice"
+					placeholder: "Raio do vértice",
+					value: this.elements[0].shape.getRadius()
 				},
 				events : {
 					blur: panel.updateRadius,

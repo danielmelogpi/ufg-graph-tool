@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global  GraphApp, $ */
+/*global  GraphApp */
 
 
 /**
@@ -9,12 +9,13 @@
 * that can execute some sort of modification in the application
 */
 
-GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer) {
+GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer, toogleButton) {
 	"use strict";
 
 	this.elements = elements;
 	this.layoutDescriptor = undefined;
 	this.parentElement = formPanelContainer;
+	this.toogleButton = toogleButton;
 
 
 	this.executeAction = function () {

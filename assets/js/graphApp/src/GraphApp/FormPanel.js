@@ -8,18 +8,22 @@
 * that can execute some sort of modification in the application
 */
 
-GraphApp.FormPanel = function (elements, formPanelContainer) {
+GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 	"use strict";
 
 	this.elements = elements;
 	this.layoutDescriptor = undefined;
 	this.parentElement = formPanelContainer;
 	this.holderClass = "input-group input-group-sm";
+	this.toogleButton = toogleButton;
+	this.app = undefined;
 
 	this.init = function () {
 		//starts the panel things
+		this.app = this.elements[0].graph.app;
 		this.createDescriptor();
 		this.drawPanel();
+		
 	};
 	
 	this.drawPanel = function () {
@@ -54,14 +58,26 @@ GraphApp.FormPanel = function (elements, formPanelContainer) {
 				}
 			}
 			formElement[0].panel = this;
-			
 			holder.append(formElement);
+
 		}
+
+		this.app.panels.stylePanel = this;
+		$(this.toogleButton).removeClass("invisible");
+		$(this.toogleButton).click();
 
 	};
 
 	this.clearPanel = function () {
-		$(this.parentElement).html();
+		$(this.parentElement).html("");
+	};
+
+	this.destroy = function () {
+		delete this.app.panels.stylePanel;
+		$(this.toogleButton).addClass("invisible");
+		$(this.toogleButton).siblings()[0].click();
+		$(this.parentElement).html("");
+
 	};
 
 

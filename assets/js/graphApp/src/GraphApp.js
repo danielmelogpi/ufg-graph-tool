@@ -19,6 +19,7 @@ var GraphApp = function (canvasHandler) {
 	this.edgeLayer = new GraphApp.Layer();
 	this.selectionLayer = new GraphApp.Layer();
 	this.activeControl = new GraphApp.Control.Navigation();
+	this.panels = {};
 
 	/*flags to deal with event-data-bubling problems (like clicking in the canvas
 	*	and not beeing able to stopPropagation in still in the node/edge ).

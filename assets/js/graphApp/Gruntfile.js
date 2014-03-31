@@ -9,6 +9,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     // Grunt tasks are associated with specific properties.
     // these names generally match their npm package name.
+
     concat: {
       // Specify some options, usually specific to each plugin.
       options: {

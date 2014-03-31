@@ -14,7 +14,7 @@ GraphApp.Handler.Selection = function (event, target) {
 	this.details = {};
 
 	this.run = function () {
-		console.log("selecting");
+		
 		if (this.hasShift()) {
 			this.target.selectionMark.toogle();
 			this.showPanel();
@@ -49,7 +49,7 @@ GraphApp.Handler.Selection = function (event, target) {
 			return e.selectionMark.shape.isVisible();
 		});
 
-		var panel = new PanelClass(selectedItems, "#panel-attributes .list-group-item");
+		var panel = new PanelClass(selectedItems, "#panel-attributes .list-group-item", "#toogle-attributes");
 		panel.init();
 	};
 
@@ -57,19 +57,25 @@ GraphApp.Handler.Selection = function (event, target) {
 		this.target.graph.stage.selectionMarks.forEach(function (mark) {
 			mark.shape.hide();
 		});
+		this.target.graph.panels.stylePanel.destroy();
 	};
 
 	this.unselectEverythingButMe = function () {
+		var remainingElement;
 		this.target.graph.stage.selectionMarks.forEach(function (mark) {
 			if (mark.anchor.id !== this.target.id) {
 				mark.shape.hide();
+				remainingElement = mark.shape.holder;
 			}
 			else {
 				mark.shape.show();
 			}
 		}, this);
+
+
 	};
 
 
 };
+
 GraphApp.Handler.Selection.prototype = new GraphApp.Handler();
