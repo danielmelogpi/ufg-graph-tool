@@ -46,7 +46,7 @@ GraphApp.FollowLine = function (anchor) {
 		points[1] = {x: x, y: y};
 
 		followLine.shape.setPoints(points);
-		followLine.graph.app.stage.draw();
+		// followLine.graph.app.stage.draw();   // o efeito de luz no nodo já tem um draw
 	};
 
 	this.startUpdate = function () {

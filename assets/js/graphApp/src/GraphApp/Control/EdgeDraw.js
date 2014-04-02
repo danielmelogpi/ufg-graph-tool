@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global GraphApp*/
+/*global GraphApp, Kinetic*/
 
 /* namespace GraphApp */
 
@@ -16,6 +16,13 @@ GraphApp.Control.EdgeDraw = function () {
 	this.app = undefined;
 	this.operationNodes = [];
 	this.followLine = undefined;
+	this.lightEffect = undefined;
+	this.lightEffectConf = {
+		color: "#f00",
+		resetBlur: 1,
+		increaseBlurUnit: 1.2,
+		blurLimit: 20
+	};
 
 	/* returns the name of the control */
 	this.getName = function () {
@@ -36,8 +43,10 @@ GraphApp.Control.EdgeDraw = function () {
 			control.operationNodes.push(node.holder);
 			control.followLine = new GraphApp.FollowLine(node.holder);
 			control.followLine.startUpdate();
+			control.initLightEffect();
 		}
 		else if (control.operationNodes.length === 1) {
+			control.destroyLightEffect();
 			control.operationNodes.push(node.holder);
 			control.createEdge();
 			control.operationNodes.length = 0;
@@ -45,10 +54,31 @@ GraphApp.Control.EdgeDraw = function () {
 			control.followLine = undefined;
 		}
 		else { //in case of caos
+			control.destroyLightEffect();
 			control.operationNodes.length = 0;
 			control.followLine.stopUpdate();
 			control.followLine = undefined;
 		}
+	};
+
+	this.initLightEffect = function () {
+		var control = this;
+		this.lightEffect = new Kinetic.Animation(function (/*frame*/) {
+			var blur = control.operationNodes[0].shape.getShadowBlur();
+			var conf = control.lightEffectConf;
+			var newBlur = (blur !== undefined && blur < conf.blurLimit) ? blur + conf.increaseBlurUnit : conf.resetBlur;
+
+			control.operationNodes[0].shape.setShadowColor(conf.color);
+			control.operationNodes[0].shape.setShadowBlur(newBlur);
+			control.operationNodes[0].graph.stage.draw();
+		});
+
+		this.lightEffect.start();
+	};
+
+	this.destroyLightEffect = function () {
+		this.lightEffect.stop();
+		this.operationNodes[0].shape.setShadowBlur(0);
 	};
 
 	this.createEdge = function () {
