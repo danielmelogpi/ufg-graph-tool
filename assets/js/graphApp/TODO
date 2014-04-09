@@ -2,9 +2,6 @@ GraphApp.Handler.DragNode
 	@TODO Otimizar a parte do updateEdges, que deixa o dragging do note um pouco lento
 	provavelmente por causa dos forEach. Firefox is more sensible on this.
 
-GraphApp.Node
- 	@TODO avoid dragging when not in navigation
-
  GraphApp.Handler.DragEdge
 	this.curveToMousePosition	@TODO é necessário fazer o calculo de animação. 
 			
