@@ -19,6 +19,9 @@ GraphApp.Control.Navigation = function () {
 	};
 
 	this.enable = function () {
+		this.app.graph.nodes.forEach(function (node) {
+			node.shape.setDraggable(true);
+		});
 	};
 
 	this.disable = function () {

@@ -21,6 +21,9 @@ GraphApp.Control.NodeDraw = function () {
 
 	this.enable = function () {
 		$(this.app.canvasHandler).children().on("click.nodedraw", [this], this.createNode);
+		this.app.graph.nodes.forEach(function (node) {
+			node.shape.setDraggable(false);
+		});
 	};
 
 	this.disable = function () {

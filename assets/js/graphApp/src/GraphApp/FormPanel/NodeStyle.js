@@ -26,7 +26,7 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer, toogleBut
 				element: "input",
 				attr: {
 					type: "text",
-					"class": "form-control",
+					"class": "form-control color-chooser",
 					placeholder: "Cor do traço",
 					value: this.elements[0].shape.getStroke()
 				},
@@ -41,7 +41,7 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer, toogleBut
 				element: "input",
 				attr: {
 					type: "text",
-					"class": "form-control",
+					"class": "form-control color-chooser",
 					placeholder: "Cor do preenchimento",
 					value: this.elements[0].shape.getFill()
 				},

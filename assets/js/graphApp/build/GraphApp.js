@@ -1,4 +1,3 @@
-/*! GraphApp 02-04-2014 */
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic*/
@@ -82,6 +81,7 @@ var GraphApp = function (canvasHandler) {
 	};
 
 };
+
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
@@ -100,7 +100,8 @@ GraphApp.Control = function () {
 	this.disable = function () {
 		console.error("Disable method not implemented!");
 	};
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
 
 /** Defines an edge and it's properties.
@@ -205,7 +206,8 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		console.assert(handler.details.success);
 	});
 
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp , $*/
 
 /** Defines an edge and it's properties.
@@ -265,7 +267,8 @@ GraphApp.FollowLine = function (anchor) {
 		this.shape.remove();
 		this.graph.stage.draw();
 	};
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp, $ */
 
 /**
@@ -284,6 +287,19 @@ GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 	this.holderClass = "input-group input-group-sm";
 	this.toogleButton = toogleButton;
 	this.app = undefined;
+	
+	this.events = {
+		afterDraw : function () {
+
+			$(".color-chooser").colorPicker({
+				onSelect: function (ui, color) {
+					this.val(color);
+					this.ui = ui;
+				}
+			});
+
+		}
+	};
 
 	this.init = function () {
 		//starts the panel things
@@ -332,6 +348,8 @@ GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 		this.app.panels.stylePanel = this;
 		$(this.toogleButton).removeClass("invisible");
 		$(this.toogleButton).click();
+		this.events.afterDraw.call(null);
+
 
 	};
 
@@ -347,8 +365,17 @@ GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 
 	};
 
+	this.on = function (eventName, fn) {
+		this.events[eventName] = fn;
+	};
 
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+	this.off = function (eventName) {
+		this.events[eventName] = function () {};
+	};
+
+
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -393,7 +420,8 @@ GraphApp.Graph = function () {
 		return newEdge;
 	};
 
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
 /**
@@ -418,14 +446,16 @@ GraphApp.Handler = function (event, target) {
 		return this.event.altKey;
 	};
 
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp */
 
 /** Describe some kind of input from the user, like mouse or keyboard */
 GraphApp.Input = function () {
 	"use strict";
 	this.stage = undefined;
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  Kinetic, GraphApp */
 
 
@@ -440,6 +470,7 @@ GraphApp.Layer = function () {
 		this.kineticLayer.add(shape);
 	};
 };
+
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
 
@@ -498,7 +529,8 @@ GraphApp.Node = function (x, y) {
 		}
 	});
 
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp */
 
 /** Defines some kind of hightlight that shows that 
@@ -664,7 +696,8 @@ GraphApp.SelectedMark = function (anchor) {
 
 
 
-};/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global Kinetic, GraphApp, $ */
 /** Defines the stage where the <canvas> element is constructed */
 
@@ -710,7 +743,8 @@ GraphApp.Stage = function (canvasHandler) {
 
 
 	
-};"use strict";
+};
+"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
@@ -722,7 +756,8 @@ GraphApp.Stage = function (canvasHandler) {
 */
 GraphApp.Graph.Style = function () {
 	this.colors = new GraphApp.Graph.Colors();
-}; /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+}; 
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -742,7 +777,8 @@ GraphApp.Control.Delete = function () {
 		return this.name;
 	};
 };
-GraphApp.Control.Delete.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Control.Delete.prototype =  new GraphApp.Control();
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp, Kinetic*/
 
 /* namespace GraphApp */
@@ -777,6 +813,7 @@ GraphApp.Control.EdgeDraw = function () {
 		var control = this;
 		this.app.graph.nodes.forEach(function (node) {
 			node.shape.on("click.edgedraw", control.addToOperation);
+			node.shape.setDraggable(false);
 		});
 	};
 
@@ -838,7 +875,8 @@ GraphApp.Control.EdgeDraw = function () {
 		});
 	};
 };
-GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -859,12 +897,16 @@ GraphApp.Control.Navigation = function () {
 	};
 
 	this.enable = function () {
+		this.app.graph.nodes.forEach(function (node) {
+			node.shape.setDraggable(true);
+		});
 	};
 
 	this.disable = function () {
 	};
 };
-GraphApp.Control.Navigation.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Control.Navigation.prototype =  new GraphApp.Control();
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp, $*/
 
 /* namespace GraphApp */
@@ -887,6 +929,9 @@ GraphApp.Control.NodeDraw = function () {
 
 	this.enable = function () {
 		$(this.app.canvasHandler).children().on("click.nodedraw", [this], this.createNode);
+		this.app.graph.nodes.forEach(function (node) {
+			node.shape.setDraggable(false);
+		});
 	};
 
 	this.disable = function () {
@@ -914,7 +959,8 @@ GraphApp.Control.NodeDraw = function () {
 
 
 };
-GraphApp.Control.NodeDraw.prototype =  new GraphApp.Control();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Control.NodeDraw.prototype =  new GraphApp.Control();
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */
@@ -935,7 +981,8 @@ GraphApp.Control.Zoom = function () {
 	};
 	
 };
-GraphApp.Control.Zoom.prototype =  new GraphApp.Control();"use strict";
+GraphApp.Control.Zoom.prototype =  new GraphApp.Control();
+"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
@@ -955,7 +1002,8 @@ GraphApp.Graph.Colors = function () {
 	this.SELECTION_RECT_STROKE = "#c73028";
 };
 
-GraphApp.Graph.Colors.prototype = {};"use strict";
+GraphApp.Graph.Colors.prototype = {};
+"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
@@ -972,7 +1020,8 @@ GraphApp.Graph.Style.Edge = function () {
 	this.lineCap = "round";
 	this.lineJoin = "round";
 };
-GraphApp.Graph.Style.Edge.prototype = new GraphApp.Graph.Style();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Graph.Style.Edge.prototype = new GraphApp.Graph.Style();
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
 /**
@@ -988,7 +1037,8 @@ GraphApp.Graph.Style.FollowLine = function () {
 	this.lineCap = "round";
 	this.lineJoin = "round";
 };
-GraphApp.Graph.Style.Edge.prototype = new GraphApp.Graph.Style();"use strict";
+GraphApp.Graph.Style.Edge.prototype = new GraphApp.Graph.Style();
+"use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
@@ -1003,7 +1053,8 @@ GraphApp.Graph.Style.Node = function () {
 	this.radius = 12;
 	this.strokeWidth = 2;
 };
-GraphApp.Graph.Style.Node.prototype = new GraphApp.Graph.Style();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Graph.Style.Node.prototype = new GraphApp.Graph.Style();
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp,Kinetic */
 
 /**
@@ -1062,6 +1113,7 @@ GraphApp.Handler.DblClickEdge = function (event, target) {
 
 }; //end of object
 GraphApp.Handler.DblClickEdge.prototype = new GraphApp.Handler(undefined);
+
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp, $,Kinetic */
 
@@ -1141,6 +1193,7 @@ GraphApp.Handler.DragEdge = function (event, target) {
 
 }; //end of object
 GraphApp.Handler.DragEdge.prototype = new GraphApp.Handler(undefined);
+
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
@@ -1183,6 +1236,7 @@ GraphApp.Handler.DragNode = function (event, target) {
 
 }; //end of object
 GraphApp.Handler.DragNode.prototype = new GraphApp.Handler(undefined);
+
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
@@ -1263,7 +1317,8 @@ GraphApp.Handler.Selection = function (event, target) {
 
 };
 
-GraphApp.Handler.Selection.prototype = new GraphApp.Handler();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Handler.Selection.prototype = new GraphApp.Handler();
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
 /**
@@ -1313,6 +1368,7 @@ GraphApp.Handler.StageClick = function (event, target) {
 
 
 GraphApp.Handler.StageClick.prototype = new GraphApp.Handler(undefined, undefined);
+
  /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp */
 
@@ -1359,7 +1415,8 @@ GraphApp.Input.Mouse = function (stage) {
 		}
 	};
 };
-GraphApp.Input.Mouse.prototype = new GraphApp.Input();/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.Input.Mouse.prototype = new GraphApp.Input();
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
 
@@ -1393,9 +1450,9 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer, toogleBut
 				element: "input",
 				attr: {
 					type: "text",
-					"class": "form-control",
+					"class": "form-control color-chooser",
 					placeholder: "Cor do traço",
-					value: this.elements[0].getStroke()
+					value: this.elements[0].shape.getStroke()
 				},
 				events : {
 					blur: panel.updateStroke,
@@ -1413,7 +1470,7 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer, toogleBut
 					max: "10",
 					"class": "form-control",
 					placeholder: "Username",
-					value: this.elements[0].getStrokeWidth()
+					value: this.elements[0].shape.getStrokeWidth()
 				},
 				events : {
 					blur: panel.updateStrokeWidth,
@@ -1454,7 +1511,8 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer, toogleBut
 
 };
 
-GraphApp.FormPanel.EdgeStyle.prototype = new GraphApp.FormPanel(undefined, undefined);/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+GraphApp.FormPanel.EdgeStyle.prototype = new GraphApp.FormPanel(undefined, undefined);
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp */
 
 /**
@@ -1482,7 +1540,7 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer, toogleBut
 				element: "input",
 				attr: {
 					type: "text",
-					"class": "form-control",
+					"class": "form-control color-chooser",
 					placeholder: "Cor do traço",
 					value: this.elements[0].shape.getStroke()
 				},
@@ -1497,7 +1555,7 @@ GraphApp.FormPanel.NodeStyle = function (elements, formPanelContainer, toogleBut
 				element: "input",
 				attr: {
 					type: "text",
-					"class": "form-control",
+					"class": "form-control color-chooser",
 					placeholder: "Cor do preenchimento",
 					value: this.elements[0].shape.getFill()
 				},

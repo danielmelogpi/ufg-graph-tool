@@ -33,6 +33,7 @@ GraphApp.Control.EdgeDraw = function () {
 		var control = this;
 		this.app.graph.nodes.forEach(function (node) {
 			node.shape.on("click.edgedraw", control.addToOperation);
+			node.shape.setDraggable(false);
 		});
 	};
 

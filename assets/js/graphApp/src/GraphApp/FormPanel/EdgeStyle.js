@@ -32,9 +32,9 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer, toogleBut
 				element: "input",
 				attr: {
 					type: "text",
-					"class": "form-control",
+					"class": "form-control color-chooser",
 					placeholder: "Cor do traço",
-					value: this.elements[0].getStroke()
+					value: this.elements[0].shape.getStroke()
 				},
 				events : {
 					blur: panel.updateStroke,
@@ -52,7 +52,7 @@ GraphApp.FormPanel.EdgeStyle = function (elements, formPanelContainer, toogleBut
 					max: "10",
 					"class": "form-control",
 					placeholder: "Username",
-					value: this.elements[0].getStrokeWidth()
+					value: this.elements[0].shape.getStrokeWidth()
 				},
 				events : {
 					blur: panel.updateStrokeWidth,

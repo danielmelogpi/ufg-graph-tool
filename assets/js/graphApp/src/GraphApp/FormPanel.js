@@ -17,6 +17,19 @@ GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 	this.holderClass = "input-group input-group-sm";
 	this.toogleButton = toogleButton;
 	this.app = undefined;
+	
+	this.events = {
+		afterDraw : function () {
+
+			$(".color-chooser").colorPicker({
+				onSelect: function (ui, color) {
+					this.val(color);
+					this.ui = ui;
+				}
+			});
+
+		}
+	};
 
 	this.init = function () {
 		//starts the panel things
@@ -65,6 +78,8 @@ GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 		this.app.panels.stylePanel = this;
 		$(this.toogleButton).removeClass("invisible");
 		$(this.toogleButton).click();
+		this.events.afterDraw.call(null);
+
 
 	};
 
@@ -78,6 +93,14 @@ GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 		$(this.toogleButton).siblings()[0].click();
 		$(this.parentElement).html("");
 
+	};
+
+	this.on = function (eventName, fn) {
+		this.events[eventName] = fn;
+	};
+
+	this.off = function (eventName) {
+		this.events[eventName] = function () {};
 	};
 
 

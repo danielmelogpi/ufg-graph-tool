@@ -14,8 +14,8 @@ module.exports = function(grunt) {
       // Specify some options, usually specific to each plugin.
       options: {
         // Specifies string to be inserted between concatenated files.
-        separator: '',
-         banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+        //separator: '',
+        // banner: '/*! <%= pkg.name %>  */\n'
       },
       // 'dist' is what is called a "target."
       // It's a way of specifying different sub-tasks or modes.
@@ -36,15 +36,24 @@ module.exports = function(grunt) {
         dest: '<%= distFolder %>/GraphApp.js'
         // You can reference any grunt config property you want.
         // Ex: '<%= concat.options.separator %>' instead of ';'
+      },
+      vendor_js : {
+        src: ['vendor/**/*.js',],
+        dest: '<%= distFolder %>/graph-app-vendor.js'
+      },
+      vendor_css : {
+        src: ['vendor/**/*.css',],
+        dest: '<%= distFolder %>/graph-app-vendor.css'
       }
+
     },
     watch: {
       scripts: {
-        files: ['src/**/*.js'],
-        tasks: ['concat:dist'],
+        files: ['vendor/**/*', 'src/**/*'],
+        tasks: ['concat:*'],
         options: {
           spawn: false,
-          interval: 500,
+          interval: 1000,
         }
       }
     }
