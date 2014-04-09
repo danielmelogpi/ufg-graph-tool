@@ -25,4 +25,11 @@ GraphApp.SelectedMark
 	// rectangular forms appear to be in front of stuff
 
 
+//add color chooser
+GraphApp.FormPanel
+this.events = {
+		afterDraw :
+
+
+
 Adicionar tooltips nos diversos controles da página

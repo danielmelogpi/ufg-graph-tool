@@ -21,12 +21,13 @@ GraphApp.FormPanel = function (elements, formPanelContainer, toogleButton) {
 	this.events = {
 		afterDraw : function () {
 
-			$(".color-chooser").colorPicker({
+			/*$(".color-chooser").colorPicker({
 				onSelect: function (ui, color) {
 					this.val(color);
 					this.ui = ui;
 				}
 			});
+			*/
 
 		}
 	};
