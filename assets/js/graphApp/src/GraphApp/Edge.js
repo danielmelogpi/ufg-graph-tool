@@ -82,6 +82,7 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 		}
 		var handler = new GraphApp.Handler.DragEdge(event, this.holder);
 		handler.run();
+		console.log(handler);
 		console.assert(handler.details.success);
 	});
 

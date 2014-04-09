@@ -30,6 +30,9 @@ GraphApp.FormPanel
 this.events = {
 		afterDraw :
 
+// não deve ser permitido selecionar uma aresta e um vértice e ainda ter um painel
+GraphApp.FormPanel
+
 
 
 Adicionar tooltips nos diversos controles da página

@@ -21,7 +21,7 @@ GraphApp.Control.EdgeDraw = function () {
 		color: "#f00",
 		resetBlur: 1,
 		increaseBlurUnit: 1.2,
-		blurLimit: 20
+		blurLimit: 40
 	};
 
 	/* returns the name of the control */
@@ -65,6 +65,7 @@ GraphApp.Control.EdgeDraw = function () {
 	this.initLightEffect = function () {
 		var control = this;
 		this.lightEffect = new Kinetic.Animation(function (/*frame*/) {
+			
 			var blur = control.operationNodes[0].shape.getShadowBlur();
 			var conf = control.lightEffectConf;
 			var newBlur = (blur !== undefined && blur < conf.blurLimit) ? blur + conf.increaseBlurUnit : conf.resetBlur;
@@ -72,6 +73,7 @@ GraphApp.Control.EdgeDraw = function () {
 			control.operationNodes[0].shape.setShadowColor(conf.color);
 			control.operationNodes[0].shape.setShadowBlur(newBlur);
 			control.operationNodes[0].graph.stage.draw();
+			
 		});
 
 		this.lightEffect.start();

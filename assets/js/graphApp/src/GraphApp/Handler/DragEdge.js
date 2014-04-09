@@ -12,7 +12,6 @@ GraphApp.Handler.DragEdge = function (event, target) {
 	this.event = event;
 	this.target = target;
 	this.interval = undefined;
-	console.debug("drag edge");
 
 	/** Executes a animation  that curves the line until the control point
 	* reaches the mouse position 
@@ -21,31 +20,32 @@ GraphApp.Handler.DragEdge = function (event, target) {
 	* setted up
 	*/
 	this.curveToMousePosition = function (handler) {
-		/** CODIGO PERIGOSO */
-		var animation = new Kinetic.Animation(function () {
+		var mousePosition;
+		try {
 			var mouseInput = new GraphApp.Input.Mouse(handler.target.graph.stage, handler.event);
-			var mousePosition = mouseInput.getMousePosition();
+			mousePosition = mouseInput.getMousePosition();
+		}
+		catch (e) {
+			console.debug(mousePosition);
+		}
 
-			/** @TODO é necessário fazer o calculo de animação. 
-			Como ele é demorado para alinhar, vou fazer depois */
-			target.curveModified = true;
-			var edgeOrigin = handler.target.origin;
-			var edgeTarget = handler.target.target;
-			var points = [];
-			points[0] = edgeOrigin.shape.getX();
-			points[1] = edgeOrigin.shape.getY();
-			points[2] = mousePosition.x;
-			points[3] = mousePosition.y;
-			points[4] = edgeTarget.shape.getX();
-			points[5] = edgeTarget.shape.getY();
-			handler.target.shape.setPoints(points);
-			handler.target.graph.stage.draw();
-			handler.target.selectionMark.updateMarkConfig();
-			this.stop();
-		},
-		handler.target.graph.stage);
-		animation.start();
+		if (!mousePosition.success) {
+			return;
+		}
 
+		target.curveModified = true;
+		var edgeOrigin = handler.target.origin;
+		var edgeTarget = handler.target.target;
+		var points = [];
+		points[0] = edgeOrigin.shape.getX();
+		points[1] = edgeOrigin.shape.getY();
+		points[2] = mousePosition.x;
+		points[3] = mousePosition.y;
+		points[4] = edgeTarget.shape.getX();
+		points[5] = edgeTarget.shape.getY();
+
+		handler.target.shape.setPoints(points);
+		handler.target.graph.stage.draw();
 	};
 
 	/** Stops the curving animation execution */
@@ -53,7 +53,6 @@ GraphApp.Handler.DragEdge = function (event, target) {
 		//event.data[0] is sent in mouseup.dragEdge event, attached to window
 		if (event.data[0]) {
 			clearInterval(event.data[0]);
-			console.debug("Stopping interval '" + event.data[0] + "'");
 			$(window).off("mouseup.dragEdge");
 		}
 	};
@@ -61,9 +60,9 @@ GraphApp.Handler.DragEdge = function (event, target) {
 	/** Sets a function that executes the animation */
 	this.run = function () {
 		if (!this.hasCtrl()) {
+			console.debug("to curve, use CTRL");
 			return;
 		}
-		console.log("running");
 		var curveMousePosition = this.curveToMousePosition;
 		var thisHandler = this;
 		this.interval = setInterval(function () {

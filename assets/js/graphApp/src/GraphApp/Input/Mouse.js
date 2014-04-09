@@ -12,7 +12,6 @@ GraphApp.Input.Mouse = function (stage) {
 	this.stagePosition = stage.kineticStage.getPosition();
 	this.stageScale = this.stage.kineticStage.getScale();
   
-	//isso não funciona esse escopo.. o objeto do mouse tem problemas
 	this.getMousePosition = function () {
 		var mouse = {
 				success: false,
