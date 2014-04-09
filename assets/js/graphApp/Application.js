@@ -48,6 +48,13 @@ function eventsToControlButtons() {
 		deactiveVisualControls();
 		button.addClass("btn-info");
 	});
+
+	$("#deleteControl").click(function () {
+		graphApp.changeControlTo(new GraphApp.Control.Delete());
+		var button = $(this);
+		deactiveVisualControls();
+		button.addClass("btn-info");
+	});
 }
 
 function deactiveVisualControls() {

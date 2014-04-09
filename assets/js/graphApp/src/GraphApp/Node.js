@@ -13,8 +13,8 @@ GraphApp.Node = function (x, y) {
 	this.id = Math.random();
 	this.selected  = false;
 	this.isRemoved = false;
-	this.nodesFromHere = [];
-	this.nodesToHere = [];
+	this.edgesFromHere = [];
+	this.edgesToHere = [];
 	this.selectionMark = undefined;
 
 	var colors = this.style.colors;

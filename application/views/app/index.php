@@ -143,15 +143,15 @@
 					<div class="btn-group">
 						<button type="button" 
 							title="<?=lang("drawn_delete")?>"
-							class="btn btn-sm btn-default" id="removeControl">
+							class="btn btn-sm btn-default" id="deleteControl">
 							<i class="fa fa-times-circle-o"></i>
 						</button><button type="button" 
 							title="<?=lang("drawn_zoom_plus")?>"
-							class="btn btn-sm btn-default zoom" id="zoom-plus" data-scale="0.5">
+							class="btn btn-sm btn-default zoom" id="zoomPlusControl" data-scale="0.5">
 							<i class="fa fa-search-plus"></i>
 						</button><button type="button" 
 							title="<?=lang("drawn_zoom_minus")?>"
-							class="btn btn-sm btn-default zoom" id="zoom-minus" data-scale="0.5">
+							class="btn btn-sm btn-default zoom" id="zoomMinusControl" data-scale="0.5">
 							<i class="fa fa-search-minus"></i>
 						</button>
 					</div>

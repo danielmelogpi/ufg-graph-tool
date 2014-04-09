@@ -23,11 +23,11 @@ GraphApp.Handler.DragNode = function (event, target) {
 	Sem isso fica mais fluido o movimento de drag
 	*/
 	if (this.target.graph.app.activeControl instanceof GraphApp.Control.Navigation) {
-		this.target.nodesFromHere.forEach(function (edge) {
+		this.target.edgesFromHere.forEach(function (edge) {
 			edge.updatePoints();
 			edge.selectionMark.updateMarkConfig();
 		});
-		this.target.nodesToHere.forEach(function (edge) {
+		this.target.edgesToHere.forEach(function (edge) {
 			edge.updatePoints();
 			edge.selectionMark.updateMarkConfig();
 		});

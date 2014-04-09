@@ -18,8 +18,8 @@ GraphApp.Edge = function (nodeOrigin, nodeTarget) {
 	this.curving = false;
 	this.selectionMark = undefined;
 
-	nodeOrigin.nodesFromHere.push(this);
-	nodeTarget.nodesToHere.push(this);
+	nodeOrigin.edgesFromHere.push(this);
+	nodeTarget.edgesToHere.push(this);
 
 	this.style = new GraphApp.Graph.Style.Edge();
 	var colors = this.style.colors;
