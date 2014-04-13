@@ -92,7 +92,7 @@
 			
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Prairie Dog<b class="caret"></b></a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Cascão<b class="caret"></b></a>
 				<ul class="dropdown-menu">
 					<li role="presentation" class="dropdown-header"><?=lang("menu_user_title")?></li>
 					<li><a href="#"><?=lang("menu_user_my_projects")?></a></li>
@@ -147,11 +147,11 @@
 							<i class="fa fa-times-circle-o"></i>
 						</button><button type="button" 
 							title="<?=lang("drawn_zoom_plus")?>"
-							class="btn btn-sm btn-default zoom" id="zoomPlusControl" data-scale="0.5">
+							class="btn btn-sm btn-default zoom" id="zoomPlusControl" data-zoom-scale="0.2">
 							<i class="fa fa-search-plus"></i>
 						</button><button type="button" 
 							title="<?=lang("drawn_zoom_minus")?>"
-							class="btn btn-sm btn-default zoom" id="zoomMinusControl" data-scale="0.5">
+							class="btn btn-sm btn-default zoom" id="zoomMinusControl" data-zoom-scale="-0.2">
 							<i class="fa fa-search-minus"></i>
 						</button>
 					</div>

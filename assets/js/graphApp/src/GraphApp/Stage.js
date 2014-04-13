@@ -15,6 +15,10 @@ GraphApp.Stage = function (canvasHandler) {
 	});
 	this.layers = [];
 	this.selectionMarks = [];
+	this.zoomConfig = {
+		max: 3,
+		min: 0.2
+	};
 
 	/** Adds a layer to the Kinetics Stage */
 	this.addLayer = function (layer) {
@@ -42,6 +46,17 @@ GraphApp.Stage = function (canvasHandler) {
 		});
 	};
 
+	this.changeScaleTo = function (change) {
+		var scale = this.kineticStage.getScale().x;
+		var newScale = scale + change;
+		
+		if (newScale >= this.zoomConfig.min && newScale <= this.zoomConfig.max) {
+			this.kineticStage.setScale(scale + newScale);
+			this.draw();
+		}
+
+
+	};
 
 	
 };

@@ -1,4 +1,5 @@
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
 
 /* namespace GraphApp */

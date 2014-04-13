@@ -55,6 +55,14 @@ function eventsToControlButtons() {
 		deactiveVisualControls();
 		button.addClass("btn-info");
 	});
+
+	//this buttons actualy use handlers classes, since they don't stay active
+
+	$("#zoomPlusControl, #zoomMinusControl").click(function (event) {
+		var handler = new GraphApp.Handler.Zoom(event, event.target);
+		handler.setApp(graphApp);
+		handler.run();
+	});
 }
 
 function deactiveVisualControls() {

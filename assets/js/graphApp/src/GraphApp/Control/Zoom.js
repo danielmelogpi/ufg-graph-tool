@@ -17,6 +17,13 @@ GraphApp.Control.Zoom = function () {
 	this.getName = function () {
 		return this.name;
 	};
+
+	this.enable = function (app, factor) {
+		
+	};
+
+	this.disable = function () {
+	};
 	
 };
 GraphApp.Control.Zoom.prototype =  new GraphApp.Control();
