@@ -80,8 +80,16 @@ GraphApp.Control.EdgeDraw = function () {
 	};
 
 	this.destroyLightEffect = function () {
-		this.lightEffect.stop();
-		this.operationNodes[0].shape.setShadowBlur(0);
+		try {
+			this.lightEffect.stop();
+			if (typeof this.operationNodes[0] != "undefined") {
+				this.operationNodes[0].shape.setShadowBlur(0);
+			}
+		}
+		catch (e) {
+			console.error(e);
+		}
+		
 	};
 
 	this.createEdge = function () {
@@ -98,8 +106,11 @@ GraphApp.Control.EdgeDraw = function () {
 
 		control.destroyLightEffect();
 		control.operationNodes.length = 0;
-		control.followLine.stopUpdate();
-		control.followLine = null;
+
+		if (control.followLine != null) {
+			control.followLine.stopUpdate();
+			control.followLine = null;
+		}
 	};
 };
 GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();
