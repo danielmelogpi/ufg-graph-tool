@@ -37,3 +37,4 @@ GraphApp.FormPanel
 
 Adicionar tooltips nos diversos controles da página
 Adicionar colorpicker nos paineis
+Reescrever métodos para o prototype das classes

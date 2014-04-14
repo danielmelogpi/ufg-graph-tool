@@ -52,13 +52,13 @@ GraphApp.Control.EdgeDraw = function () {
 			control.createEdge();
 			control.operationNodes.length = 0;
 			control.followLine.stopUpdate();
-			control.followLine = undefined;
+			control.followLine = null;
 		}
 		else { //in case of caos
 			control.destroyLightEffect();
 			control.operationNodes.length = 0;
 			control.followLine.stopUpdate();
-			control.followLine = undefined;
+			control.followLine = null;
 		}
 	};
 
@@ -95,6 +95,11 @@ GraphApp.Control.EdgeDraw = function () {
 		this.app.graph.nodes.forEach(function (node) {
 			node.shape.off("click.edgedraw", control.addToOperation);
 		});
+
+		control.destroyLightEffect();
+		control.operationNodes.length = 0;
+		control.followLine.stopUpdate();
+		control.followLine = null;
 	};
 };
 GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();

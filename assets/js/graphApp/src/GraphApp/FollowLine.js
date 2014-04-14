@@ -47,6 +47,7 @@ GraphApp.FollowLine = function (anchor) {
 
 		followLine.shape.setPoints(points);
 		// followLine.graph.app.stage.draw();   // o efeito de luz no nodo já tem um draw
+		console.log("update to mouse");
 	};
 
 	this.startUpdate = function () {

@@ -257,6 +257,7 @@ GraphApp.FollowLine = function (anchor) {
 
 		followLine.shape.setPoints(points);
 		// followLine.graph.app.stage.draw();   // o efeito de luz no nodo já tem um draw
+		console.log("update to mouse");
 	};
 
 	this.startUpdate = function () {
@@ -934,13 +935,13 @@ GraphApp.Control.EdgeDraw = function () {
 			control.createEdge();
 			control.operationNodes.length = 0;
 			control.followLine.stopUpdate();
-			control.followLine = undefined;
+			control.followLine = null;
 		}
 		else { //in case of caos
 			control.destroyLightEffect();
 			control.operationNodes.length = 0;
 			control.followLine.stopUpdate();
-			control.followLine = undefined;
+			control.followLine = null;
 		}
 	};
 
@@ -977,6 +978,11 @@ GraphApp.Control.EdgeDraw = function () {
 		this.app.graph.nodes.forEach(function (node) {
 			node.shape.off("click.edgedraw", control.addToOperation);
 		});
+
+		control.destroyLightEffect();
+		control.operationNodes.length = 0;
+		control.followLine.stopUpdate();
+		control.followLine = null;
 	};
 };
 GraphApp.Control.EdgeDraw.prototype =  new GraphApp.Control();
