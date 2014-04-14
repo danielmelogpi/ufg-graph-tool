@@ -753,11 +753,10 @@ GraphApp.Stage = function (canvasHandler) {
 		var newScale = scale + change;
 		
 		if (newScale >= this.zoomConfig.min && newScale <= this.zoomConfig.max) {
-			this.kineticStage.setScale(scale + newScale);
+			this.kineticStage.setScale(newScale);
+			console.info(newScale);
 			this.draw();
 		}
-
-
 	};
 
 	
@@ -1071,35 +1070,6 @@ GraphApp.Control.NodeDraw = function () {
 
 };
 GraphApp.Control.NodeDraw.prototype =  new GraphApp.Control();
-/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global GraphApp*/
-
-/* namespace GraphApp */
-"use strict";
-
-/** 
-@class GraphApp.Control.Zoom
-Defines zoom actions over the stage
-*/
-GraphApp.Control.Zoom = function () {
-	
-	/* name of the control */
-	this.nameControl = "Zoom";
-
-	/* returns the name of the control */
-	this.getName = function () {
-		return this.name;
-	};
-
-	this.enable = function (app, factor) {
-		
-	};
-
-	this.disable = function () {
-	};
-	
-};
-GraphApp.Control.Zoom.prototype =  new GraphApp.Control();
 "use strict";
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
@@ -1518,6 +1488,7 @@ GraphApp.Handler.Zoom = function (event, target) {
 	* @param <GraphApp.Stage> stage    the stage 
 	*/
 	this.changeScaleTo = function (scale, stage) {
+		console.log(scale);
 		stage.changeScaleTo(scale);
 	};
 };

@@ -51,11 +51,10 @@ GraphApp.Stage = function (canvasHandler) {
 		var newScale = scale + change;
 		
 		if (newScale >= this.zoomConfig.min && newScale <= this.zoomConfig.max) {
-			this.kineticStage.setScale(scale + newScale);
+			this.kineticStage.setScale(newScale);
+			console.info(newScale);
 			this.draw();
 		}
-
-
 	};
 
 	

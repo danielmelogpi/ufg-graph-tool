@@ -139,13 +139,14 @@
 							class="btn btn-sm btn-default" id="edgeControl">
 							<i class="fa fa-minus"></i>
 						</button>
-					</div>
-					<div class="btn-group">
 						<button type="button" 
 							title="<?=lang("drawn_delete")?>"
 							class="btn btn-sm btn-default" id="deleteControl">
 							<i class="fa fa-times-circle-o"></i>
-						</button><button type="button" 
+						</button>
+					</div>
+					<div class="btn-group">
+						<button type="button" 
 							title="<?=lang("drawn_zoom_plus")?>"
 							class="btn btn-sm btn-default zoom" id="zoomPlusControl" data-zoom-scale="0.2">
 							<i class="fa fa-search-plus"></i>

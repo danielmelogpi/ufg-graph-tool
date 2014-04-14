@@ -30,6 +30,7 @@ GraphApp.Handler.Zoom = function (event, target) {
 	* @param <GraphApp.Stage> stage    the stage 
 	*/
 	this.changeScaleTo = function (scale, stage) {
+		console.log(scale);
 		stage.changeScaleTo(scale);
 	};
 };
