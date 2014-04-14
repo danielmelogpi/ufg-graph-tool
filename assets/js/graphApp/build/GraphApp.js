@@ -1,6 +1,6 @@
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global Kinetic*/
+/*global Kinetic, $*/
 
 
 /** 
@@ -20,6 +20,7 @@ var GraphApp = function (canvasHandler) {
 	this.selectionLayer = new GraphApp.Layer();
 	this.activeControl = new GraphApp.Control.Navigation();
 	this.panels = {};
+	this.window = new GraphApp.Window($(window));
 
 	/*flags to deal with event-data-bubling problems (like clicking in the canvas
 	*	and not beeing able to stopPropagation in still in the node/edge ).
@@ -42,9 +43,9 @@ var GraphApp = function (canvasHandler) {
 	propagation ?  */
 	this.stage.addLayer(this.layer);
 	this.stage.addEventsToCanvas();
-	//this.stage.addLayer(this.edgeLayer);
-	//this.stage.addLayer(this.nodeLayer);
-	//this.stage.addLayer(this.selectionLayer);
+	
+	this.window.setApp(this);
+	this.window.setupEvents();
 
 	/** Adds a Kinetic form to the proper layer */
 	this.addShape = function (shape) {
@@ -775,11 +776,47 @@ GraphApp.Graph.Style = function () {
 	this.colors = new GraphApp.Graph.Colors();
 }; 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global GraphApp */
+/** Represents the window, mainly to set events about the keyboard */
+
+
+/*
+*@param jQuery set  window      the return of the jQuery method $(window)
+*/
+GraphApp.Window = function (window) {
+	"use strict";
+	this.app = null;
+	this.window = window;
+
+};
+
+GraphApp.Window.prototype.handleKeyUp = function (app) {
+	"use strict";
+
+	return function (event) {
+		//46 = delete key
+		if (event.keyCode == 46) {
+			var handler = new GraphApp.Handler.DelKey(event, app);
+			handler.run();
+		}
+	};
+};
+
+GraphApp.Window.prototype.setupEvents = function () {
+	"use strict";
+	this.window.on("keyup", this.events.keyup(this.app));
+};
+
+GraphApp.Window.prototype.setApp = function (app) {
+	"use strict";
+	this.app = app;
+};
+
+GraphApp.Window.prototype.events = {
+	"keyup": GraphApp.Window.prototype.handleKeyUp
+};
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global GraphApp*/
-
-/* namespace GraphApp */
-
-
 /** 
 @class GraphApp.Control.Delete
 Defines a control for deletion of shapes
@@ -798,75 +835,89 @@ GraphApp.Control.Delete = function () {
 	};
 
 	this.enable = function () {
-		this.app.graph.nodes.forEach(this.deleteNode);
+		this.app.graph.nodes.forEach(this.deleteNodeListener);
 		this.app.graph.edges.forEach(this.deleteEdge);
 	};
 
-	this.deleteNode = function (node) {
+	this.deleteNodeListener = function (node) {
 		node.shape.on("click.remove", function (e) {
 			//recover reference for this node in the graph node array
-			
 			var holder = e.targetNode.holder;
-			var graph = holder.graph;
-			var shape = holder.shape;
-			var nodeArray = holder.graph.nodes;
-			var pos = nodeArray.indexOf(holder);
-
-			nodeArray.splice(pos, 1);
-
-			holder.edgesFromHere.forEach(function (edge) {
-				//delete the references 
-				var edgePos = graph.edges.indexOf(edge);
-				graph.edges.splice(edgePos, 1);
-				edge.shape.destroy();
-
-				//remove this edge from the other end vertex
-				var target = edge.target;
-				var tPos = target.edgesToHere.indexOf(edge);
-				target.edgesToHere.splice(tPos, 1);
-
-			});
-
-			holder.edgesToHere.forEach(function (edge) {
-				//delete the references
-				var edgePos = graph.edges.indexOf(edge);
-				graph.edges.splice(edgePos, 1);
-				edge.shape.destroy();
-
-				//remove this edge from the other end vertex
-				var origin = edge.origin;
-				var tOrigin = origin.edgesFromHere.indexOf(edge);
-				origin.edgesFromHere.splice(tOrigin, 1);
-			});
-
-			shape.destroy();
-			graph.app.stage.draw();
+			this.deleteNode(holder);
 		});
 	};
 
-	this.deleteEdge = function (edge) {
+	//this is used by GraphApp.Handler.DelKey
+	this.deleteNode = function (holder) {
+		var graph = holder.graph;
+		var shape = holder.shape;
+		var nodeArray = holder.graph.nodes;
+		var pos = nodeArray.indexOf(holder);
+
+		nodeArray.splice(pos, 1);
+
+		holder.selectionMark.shape.destroy();
+		delete holder.selectionMark;
+
+		holder.edgesFromHere.forEach(function (edge) {
+			//delete the references 
+			var edgePos = graph.edges.indexOf(edge);
+			graph.edges.splice(edgePos, 1);
+			edge.shape.destroy();
+
+			//remove this edge from the other end vertex
+			var target = edge.target;
+			var tPos = target.edgesToHere.indexOf(edge);
+			target.edgesToHere.splice(tPos, 1);
+
+		});
+
+		holder.edgesToHere.forEach(function (edge) {
+			//delete the references
+			var edgePos = graph.edges.indexOf(edge);
+			graph.edges.splice(edgePos, 1);
+			edge.shape.destroy();
+
+			//remove this edge from the other end vertex
+			var origin = edge.origin;
+			var tOrigin = origin.edgesFromHere.indexOf(edge);
+			origin.edgesFromHere.splice(tOrigin, 1);
+		});
+
+		shape.destroy();
+		graph.app.stage.draw();
+	};
+
+	this.deleteEdgeListener = function (edge) {
 		edge.shape.on("click.remove", function (e) {
 			var holder = e.targetNode.holder;
-			var graph = holder.graph;
-			var shape = holder.shape;
-			var edgeArray = holder.graph.edges;
-			var pos = edgeArray.indexOf(holder);
-
-			edgeArray.splice(pos, 1);
-
-			//delete reference from origin node
-			var oPos = holder.origin.edgesFromHere.indexOf(holder);
-			holder.origin.edgesFromHere.splice(oPos, 1);
-
-			var tPos = holder.origin.edgesToHere.indexOf(holder);
-			holder.origin.edgesFromHere.splice(tPos, 1);
-
-			//remove references from GraphApp
-			var gPos = graph.edges.indexOf(holder);
-			graph.edges.splice(gPos, 1);
-
-			shape.destroy();
+			this.deleteEdge(holder);
 		});
+	};
+
+	this.deleteEdge = function (holder) {
+		var graph = holder.graph;
+		var shape = holder.shape;
+		var edgeArray = holder.graph.edges;
+		var pos = edgeArray.indexOf(holder);
+
+		edgeArray.splice(pos, 1);
+
+		holder.selectionMark.shape.destroy();
+		delete holder.selectionMark;
+
+		//delete reference from origin node
+		var oPos = holder.origin.edgesFromHere.indexOf(holder);
+		holder.origin.edgesFromHere.splice(oPos, 1);
+
+		var tPos = holder.origin.edgesToHere.indexOf(holder);
+		holder.origin.edgesFromHere.splice(tPos, 1);
+
+		//remove references from GraphApp
+		var gPos = graph.edges.indexOf(holder);
+		graph.edges.splice(gPos, 1);
+
+		shape.destroy();
 	};
 
 	this.disable = function () {
@@ -1201,6 +1252,57 @@ GraphApp.Handler.DblClickEdge = function (event, target) {
 
 }; //end of object
 GraphApp.Handler.DblClickEdge.prototype = new GraphApp.Handler(undefined);
+
+/*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
+/*global  GraphApp */
+
+/**
+* Deals with hitting the del key. When we have selected elements, they must be deleted
+* They are suposed to be setted by the GraphApp.window object
+* @param <Object> event    the click Event
+* @param <GraphApp> the application
+* @return void
+*/
+GraphApp.Handler.DelKey = function (event, app) {
+	"use strict";
+	this.Iam = "GraphApp.Handler.DelKey";
+	this.event = event;
+	this.app = app;
+	//this.target = target;	this one doesnt have a meaninfull target
+
+	this.run = function () {
+		console.debug("running delkey handler");
+		
+		if (this.app.activeControl instanceof GraphApp.Control.Navigation) {
+			console.debug("deleting");
+			var nodes = this.app.graph.nodes.filter(function (e) {
+				return e.selectionMark.shape.isVisible();
+			});
+
+			var edges = this.app.graph.edges.filter(function (e) {
+				return e.selectionMark.shape.isVisible();
+			});
+
+			var delControl = new GraphApp.Control.Delete();
+			delControl.app = this.app;
+
+			nodes.forEach(function (node) {
+				delControl.deleteNode(node);
+			});
+
+			edges.forEach(function (edge) {
+				delControl.deleteEdge(edge);
+			});
+			
+			this.app.stage.draw();
+		}
+
+	};
+
+};
+
+
+GraphApp.Handler.DelKey.prototype = new GraphApp.Handler(undefined, undefined);
 
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
 /*global  GraphApp, $,Kinetic */

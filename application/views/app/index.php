@@ -11,13 +11,13 @@
 		<!-- http://grafolegal.zz.mu/ -->
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
-		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
+		
 		<?
 		echo link_tag("assets/css/main.css"). "\n";
 		echo link_tag("assets/css/bootstrap.css"). "\n";
 		echo link_tag("assets/css/colpick.css"). "\n";
 		echo script_tag("assets/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"). "\n";
+		echo link_tag("assets/css/font-awesome.css"). "\n";
 		?>
 
 		<style>

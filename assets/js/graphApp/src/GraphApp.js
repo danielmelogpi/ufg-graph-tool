@@ -1,6 +1,6 @@
 /** jslint */
 /*jslint browser: true, devel: true, closure: false, debug: true, nomen: false, white: false */
-/*global Kinetic*/
+/*global Kinetic, $*/
 
 
 /** 
@@ -20,6 +20,7 @@ var GraphApp = function (canvasHandler) {
 	this.selectionLayer = new GraphApp.Layer();
 	this.activeControl = new GraphApp.Control.Navigation();
 	this.panels = {};
+	this.window = new GraphApp.Window($(window));
 
 	/*flags to deal with event-data-bubling problems (like clicking in the canvas
 	*	and not beeing able to stopPropagation in still in the node/edge ).
@@ -42,9 +43,9 @@ var GraphApp = function (canvasHandler) {
 	propagation ?  */
 	this.stage.addLayer(this.layer);
 	this.stage.addEventsToCanvas();
-	//this.stage.addLayer(this.edgeLayer);
-	//this.stage.addLayer(this.nodeLayer);
-	//this.stage.addLayer(this.selectionLayer);
+	
+	this.window.setApp(this);
+	this.window.setupEvents();
 
 	/** Adds a Kinetic form to the proper layer */
 	this.addShape = function (shape) {
