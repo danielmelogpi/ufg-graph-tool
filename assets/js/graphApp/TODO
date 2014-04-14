@@ -33,6 +33,11 @@ this.events = {
 // não deve ser permitido selecionar uma aresta e um vértice e ainda ter um painel
 GraphApp.FormPanel
 
+GraphApp.Window
+	GraphApp.Window.prototype.setupEvents
+	//needs better mapping of functions and events.
+
+
 
 
 Adicionar tooltips nos diversos controles da página
